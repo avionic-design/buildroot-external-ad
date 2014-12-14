@@ -1,2 +1,3 @@
 source "$BR2_EXTERNAL/package/l4t/Config.in"
 source "$BR2_EXTERNAL/package/lib/Config.in"
+source "$BR2_EXTERNAL/package/extra/Config.in"
