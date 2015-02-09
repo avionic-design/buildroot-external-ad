@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL/package/l4t/Config.in"
