@@ -1,0 +1,10 @@
+buildroot-external-ad
+=====================
+
+Buildroot external overlay for Avionic Design Meerkat-based systems. Contains
+support for building a root-filesystem including Linux4Tegra binary driver
+support.
+
+For l4t compatibility buildroot-2014.05 has to be used as base, as later
+buildroot releases contain components (especially Xorg) in newer version than
+l4t supports.
