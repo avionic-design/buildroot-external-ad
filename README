@@ -8,3 +8,42 @@ support.
 For l4t compatibility buildroot-2014.05 has to be used as base, as later
 buildroot releases contain components (especially Xorg) in newer version than
 l4t supports.
+
+Quickstart
+==========
+
+Prerequistes: You must install the buildroot requirements as described in the
+buildroot manual:
+http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
+
+0. Create working-directory
+
+# mkdir -p ~/dev/meerkat
+# export WORKING_DIR=~/dev/meerkat
+
+1. Grab buildroot and our overlay
+
+# cd ${WORKING_DIR}
+# git clone https://github.com/avionic-design/buildroot-external-ad.git
+# git clone git clone git://git.buildroot.net/buildroot
+# cd ${WORKING_DIR}/buildroot
+# git checkout -b 2014.05 2014.05
+
+2. Prepare build
+
+# cd ${WORKING_DIR}/buildroot
+# make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t_defconfig
+
+3. Start build
+
+# make O=build/meerkat-rootfs
+
+Once the build process is finished the following output files are generated:
+# ls -1 build/meerkat-rootfs/images/
+# rootfs.tar
+# tegra124-kein-baseboard.dtb
+# uImage-tegra124-kein-baseboard
+# zImage
+
+uImage-tegra124-kein-baseboard can be loaded by u-boot to boot the kernel.
+rootfs.tar contains a root filesystem including Xorg and nvidia L4T drivers.
