@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CUDA_SAMPLES
+	bool "cuda-samples"
+	select BR2_PACKAGE_CUDA
+	help
+		Pre-compiled CUDA example programs by NVIDIA

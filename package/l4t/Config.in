@@ -2,4 +2,5 @@ menu "Linux4Tegra modules"
 source "$BR2_EXTERNAL/package/l4t/nvidia-drivers/Config.in"
 source "$BR2_EXTERNAL/package/l4t/nvidia-gst/Config.in"
 source "$BR2_EXTERNAL/package/l4t/cuda/Config.in"
+source "$BR2_EXTERNAL/package/l4t/cuda-samples/Config.in"
 endmenu
