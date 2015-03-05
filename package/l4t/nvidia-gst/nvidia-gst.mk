@@ -39,7 +39,10 @@ define NVIDIA_GST_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-0.10/*.so $(TARGET_DIR)/usr/lib/gstreamer-0.10/
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-1.0/*.so $(TARGET_DIR)/usr/lib/gstreamer-1.0/
 
-	$(INSTALL) -D -m 0755 $(@D)/usr/bin/nvgst* $(TARGET_DIR)/usr/bin
+	$(INSTALL) -d $(TARGET_DIR)/usr/bin
+	$(INSTALL) -m 0755 $(@D)/usr/bin/nvgst{capture,player}-{0.10,1.0} $(TARGET_DIR)/usr/bin; \
+	ln -sf nvgstcapture-0.10 $(TARGET_DIR)/usr/bin/nvgstcapture
+	ln -sf nvgstplayer-0.10 $(TARGET_DIR)/usr/bin/nvgstplayer
 endef
 
 $(eval $(generic-package))
