@@ -8,14 +8,20 @@ NVIDIA_DRIVERS_VERSION = 21.2.0
 NVIDIA_DRIVERS_SOURCE = Tegra124_Linux_R$(NVIDIA_DRIVERS_VERSION)_armhf.tbz2
 NVIDIA_DRIVERS_SITE = http://developer.download.nvidia.com/mobile/tegra/l4t/r$(NVIDIA_DRIVERS_VERSION)/pm375_release_armhf/
 NVIDIA_DRIVERS_LICENSE = custom
-NVIDIA_DRIVERS_LICENSE_FILES = Linux_for_Tegra/nv_tegra/LICENSE
+NVIDIA_DRIVERS_LICENSE_FILES = LICENSE
 NVIDIA_DRIVERS_INSTALL_STAGING = YES
 NVIDIA_DRIVERS_INSTALL_TARGET = YES
 
+nvidia-drivers-stage2-tarball := nvidia_drivers.tbz2
+nvidia-drivers-stage1-unpack-these := $(addprefix Linux_for_Tegra/nv_tegra/, \
+	$(NVIDIA_DRIVERS_LICENSE_FILES) $(nvidia-drivers-stage2-tarball))
+
 define NVIDIA_DRIVERS_EXTRACT_CMDS
 	$(call suitable-extractor,$(NVIDIA_DRIVERS_SOURCE)) $(DL_DIR)/$(NVIDIA_DRIVERS_SOURCE) | \
-		$(TAR) -O $(TAR_OPTIONS) - Linux_for_Tegra/nv_tegra/nvidia_drivers.tbz2 | \
-	$(TAR) -j -C $(NVIDIA_DRIVERS_DIR) $(TAR_OPTIONS) -
+	$(TAR) -C $(NVIDIA_DRIVERS_DIR) $(TAR_STRIP_COMPONENTS)=2 $(TAR_OPTIONS) - $(nvidia-drivers-stage1-unpack-these)
+	$(call suitable-extractor,$(nvidia-drivers-stage2-tarball)) $(NVIDIA_DRIVERS_DIR)/$(nvidia-drivers-stage2-tarball) | \
+	$(TAR) -C $(NVIDIA_DRIVERS_DIR) $(TAR_OPTIONS) -
+	$(RM) $(NVIDIA_DRIVERS_DIR)/$(nvidia-drivers-stage2-tarball)
 endef
 
 define NVIDIA_DRIVERS_INSTALL_STAGING_CMDS
