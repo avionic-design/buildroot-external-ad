@@ -25,7 +25,7 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 
 # cd ${WORKING_DIR}
 # git clone https://github.com/avionic-design/buildroot-external-ad.git
-# git clone git clone git://git.buildroot.net/buildroot
+# git clone git://git.buildroot.net/buildroot
 # cd ${WORKING_DIR}/buildroot
 # git checkout -b 2014.05 2014.05
 
