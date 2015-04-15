@@ -4,9 +4,11 @@
 #
 ################################################################################
 
-NVIDIA_GST_VERSION = 21.2.0
+NVIDIA_GST_VERSION_MAJOR = 21
+NVIDIA_GST_VERSION_MINOR = 3.0
+NVIDIA_GST_VERSION = $(NVIDIA_GST_VERSION_MAJOR).$(NVIDIA_GST_VERSION_MINOR)
 NVIDIA_GST_SOURCE = Tegra124_Linux_R$(NVIDIA_GST_VERSION)_armhf.tbz2
-NVIDIA_GST_SITE = http://developer.download.nvidia.com/mobile/tegra/l4t/r$(NVIDIA_GST_VERSION)/pm375_release_armhf/
+NVIDIA_GST_SITE = http://developer.download.nvidia.com/embedded/L4T/r$(NVIDIA_GST_VERSION_MAJOR)_Release_v$(NVIDIA_GST_VERSION_MINOR)/
 NVIDIA_GST_LICENSE = custom
 NVIDIA_GST_LICENSE_FILES = LICENSE
 NVIDIA_GST_INSTALL_STAGING = YES
