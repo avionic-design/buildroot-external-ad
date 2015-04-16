@@ -34,16 +34,30 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 # cd ${WORKING_DIR}/buildroot
 # make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t_defconfig
 
+Select devicetree for your baseboard:
+
+# make O=build/meerkat-rootfs menuconfig
+
+Select sub-menu "Kernel", item "Device Tree Source file names".  Here,
+enter the baseboard devicetree filename as found in the kernel sources
+provided by Avionic Design, for example "tegra124-kein-baseboard" or
+"tegra124-tobor".  Exit menuconfig, saving the configuration.
+
 3. Start build
 
 # make O=build/meerkat-rootfs
 
-Once the build process is finished the following output files are generated:
+This generates a kernel zImage, devicetree blob, uImage, and rootfs.
+
+For example, if you are building for the "kein-baseboard" baseboard, the
+following output files are generated:
 # ls -1 build/meerkat-rootfs/images/
 # rootfs.tar
 # tegra124-kein-baseboard.dtb
 # uImage-tegra124-kein-baseboard
 # zImage
+
+Filenames will vary depending on the baseboard chosen in step 2.
 
 uImage-tegra124-kein-baseboard can be loaded by u-boot to boot the kernel.
 rootfs.tar contains a root filesystem including Xorg and nvidia L4T drivers.
