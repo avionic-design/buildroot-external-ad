@@ -33,6 +33,7 @@ define NVIDIA_DRIVERS_INSTALL_STAGING_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/tegra-egl/*.so* $(STAGING_DIR)/usr/lib/tegra-egl/
 	ln -sf libGL.so.1 $(STAGING_DIR)/usr/lib/tegra/libGL.so
 	ln -sf libcuda.so.1.1 $(STAGING_DIR)/usr/lib/tegra/libcuda.so
+	ln -sf libcuda.so.1.1 $(STAGING_DIR)/usr/lib/tegra/libcuda.so.1
 endef
 
 define NVIDIA_DRIVERS_INSTALL_TARGET_CMDS
@@ -46,6 +47,7 @@ define NVIDIA_DRIVERS_INSTALL_TARGET_CMDS
 	ln -sf ../../../tegra/libglx.so $(TARGET_DIR)/usr/lib/xorg/modules/extensions/libglx.so
 	ln -sf libGL.so.1 $(TARGET_DIR)/usr/lib/tegra/libGL.so
 	ln -sf libcuda.so.1.1 $(TARGET_DIR)/usr/lib/tegra/libcuda.so
+	ln -sf libcuda.so.1.1 $(TARGET_DIR)/usr/lib/tegra/libcuda.so.1
 
 	$(INSTALL) -d $(TARGET_DIR)/lib/firmware
 	$(INSTALL) -D -m 0644 $(@D)/lib/firmware/*.bin $(TARGET_DIR)/lib/firmware/
