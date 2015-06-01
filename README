@@ -31,6 +31,10 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 
 2. Prepare build
 
+The following commands describe an out-of-tree build, where the O=...
+make argument points to a subdirectory build/meerkat-rootfs in the
+buildroot top-level directory.
+
 # cd ${WORKING_DIR}/buildroot
 # make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t_defconfig
 
