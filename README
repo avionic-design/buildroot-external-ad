@@ -38,7 +38,8 @@ buildroot top-level directory.
 # cd ${WORKING_DIR}/buildroot
 # make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t_defconfig
 
-Select devicetree for your baseboard:
+In order to configure the Linux kernel for the baseboard, select the
+corresponding devicetree:
 
 # make O=build/meerkat-rootfs menuconfig
 
@@ -48,6 +49,13 @@ provided by Avionic Design, for example "tegra124-kein-baseboard" or
 "tegra124-tobor".  Exit menuconfig, saving the configuration.
 
 3. Start build
+
+If you want to have the cross-compilation toolchain pre-built without
+building the root filesystem and kernel, execute:
+
+# make O=build/meerkat-rootfs toolchain
+
+Build the root filesystem and the kernel:
 
 # make O=build/meerkat-rootfs
 
