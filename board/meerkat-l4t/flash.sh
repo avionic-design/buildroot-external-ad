@@ -140,7 +140,10 @@ force=0
 check_depends
 
 # Parse commandline optione
-ARGS=$(getopt -o hd:v:p:f -l "help,device:,vendor:,product:,force" -n $0 -- "$@") || die
+ARGS=$(getopt \
+	-o hd:v:p:fP \
+	-l "help,device:,vendor:,product:,force,keep-parttable" \
+	-n $0 -- "$@") || die
 
 eval set -- "$ARGS";
 
