@@ -63,13 +63,19 @@ This generates a kernel zImage, devicetree blob, uImage, and rootfs.
 
 For example, if you are building for the "kein-baseboard" baseboard, the
 following output files are generated:
-# ls -1 build/meerkat-rootfs/images/
-# rootfs.tar
+# ls -1F build/meerkat-rootfs/images/
+# rootfs.ext2
+# rootfs.ext4@
 # tegra124-kein-baseboard.dtb
 # uImage-tegra124-kein-baseboard
-# zImage
+# zImage*
 
-Filenames will vary depending on the baseboard chosen in step 2.
+The format of the rootfs depends on the buildroot configuration and can
+be either a tarball (rootfs.tar) or a filesystem image (e.g.
+rootfs.ext4).  Filenames will also vary depending on the baseboard
+chosen in step 2.
 
 uImage-tegra124-kein-baseboard can be loaded by u-boot to boot the kernel.
-rootfs.tar contains a root filesystem including Xorg and nvidia L4T drivers.
+rootfs.tar or rootfs.ext4 contains a root filesystem including Xorg and
+nvidia L4T drivers.
+
