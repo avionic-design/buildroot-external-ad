@@ -79,3 +79,28 @@ uImage-tegra124-kein-baseboard can be loaded by u-boot to boot the kernel.
 rootfs.tar or rootfs.ext4 contains a root filesystem including Xorg and
 nvidia L4T drivers.
 
+4. Flash the rootfs onto the eMMC
+
+In order to flash the root filesystem onto the eMMC on the Meerkat COM,
+you can leverage USB mass storage support (aka UMS) in u-boot, which
+lets you write to the eMMC as a standard block device on the host.
+Current u-boot builds from Avionic Design automatically drop into UMS
+mode if no bootable OS is found.  Otherwise, UMS in u-boot can still be
+started manually.  To do this, first interrupt the boot sequence in
+u-boot by hitting any key, which drops into the u-boot shell. There,
+enter:
+
+# run bootcmd_ums0
+
+This turns the eMMC into a standard USB mass storage block device (with
+ID 0955:701a) that can be accessed via the recovery USB port.  The BSP
+comes with a helper script board/meerkat-l4t/flash.sh which, provided
+with the filename of a rootfs image, automatically identifies the K1 USB
+mass storage device on the host, creates a single partition on it,
+and writes the filesystem image:
+
+# ../buildroot-external-ad/board/meerkat-l4t/flash.sh \
+	build/meerkat-rootfs/images/rootfs.ext4
+
+When the process has completed, exit UMS in u-boot by hitting Ctrl-C.
+The system is now ready to boot from the eMMC.
