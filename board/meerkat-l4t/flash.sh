@@ -60,6 +60,10 @@ check_depends() {
 		{ warn "Dependency error: parted could not be found" &&
 			error=1; }
 
+	type resize2fs >/dev/null 2>&1 ||
+		{ warn "Dependency error: resize2fs could not be found" &&
+			error=1; }
+
 	[ $error -eq 1 ] && exit 1
 }
 
@@ -95,6 +99,13 @@ flash_root() {
 	else
 		echo "No disk dump utility available"; exit 1;
 	fi
+}
+
+resize_fs() {
+	local part="$1"
+	[ -b "$part" ] || die "$part is not a block device"
+
+	resize2fs -p $part || die "Resizing filesystem to partition failed"
 }
 
 mkpart() {
@@ -231,3 +242,11 @@ echo
 echo "Step $step: Writing image to disk"
 flash_root $image $device$partition
 echo "Step $step: done"
+step=$((step+1))
+
+echo "Step $step: Resizing filesystem to partition"
+resize_fs $device$partition
+echo "Step $step: done"
+
+echo
+echo "Target successfully flashed. Please reset the device to start booting."
