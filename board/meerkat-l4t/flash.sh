@@ -99,9 +99,16 @@ flash_root() {
 
 mkpart() {
 	local disk="$1"
+	local secs=0
 
 	parted -s $disk mklabel gpt mkpart primary ext4 0% 100% ||
 		die "Creating partition table failed"
+
+	while ! [ -b ${disk}1 ]; do
+		sleep 1
+		[ $((++secs)) -lt 5 ] ||
+			die "Timeout waiting for partition block device"
+	done
 }
 
 detect_devices() {
