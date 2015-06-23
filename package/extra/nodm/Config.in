@@ -1,0 +1,8 @@
+config BR2_PACKAGE_NODM
+	bool "nodm"
+	select BR2_PACKAGE_LINUX_PAM
+	help
+	  nodm is an automatic display manager which automatically starts an X
+	  session at system boot.
+
+	  http://www.enricozini.org/sw/nodm/

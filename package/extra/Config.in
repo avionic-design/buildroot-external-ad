@@ -1,1 +1,2 @@
 source "$BR2_EXTERNAL/package/extra/glmark2/Config.in"
+source "$BR2_EXTERNAL/package/extra/nodm/Config.in"
