@@ -1,0 +1,1 @@
+default -1 default -1 = /home/default /bin/bash audio,video The default BSP user
