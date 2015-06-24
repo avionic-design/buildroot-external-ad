@@ -23,6 +23,8 @@ PIDFILE=/var/run/nodm.pid
 [ -r /etc/default/nodm ] && . /etc/default/nodm
 [ "$NODM_ENABLED" = "true" ] || exit 1
 
+export NODM_USER NODM_X_OPTIONS NODM_MIN_SESSION_TIME NODM_XINIT NODM_XSESSION
+
 start() {
 	echo -n "Starting nodm: "
 
