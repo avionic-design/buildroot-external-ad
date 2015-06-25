@@ -45,6 +45,8 @@ define NVIDIA_GST_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 $(@D)/usr/bin/nvgst{capture,player}-{0.10,1.0} $(TARGET_DIR)/usr/bin; \
 	ln -sf nvgstcapture-0.10 $(TARGET_DIR)/usr/bin/nvgstcapture
 	ln -sf nvgstplayer-0.10 $(TARGET_DIR)/usr/bin/nvgstplayer
+	$(INSTALL) -d $(TARGET_DIR)/sbin
+	$(INSTALL) -m 0755 $(@D)/sbin/camera_device_detect $(TARGET_DIR)/sbin
 endef
 
 $(eval $(generic-package))
