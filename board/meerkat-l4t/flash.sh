@@ -51,7 +51,7 @@ check_depends() {
 		{ warn "Dependency error: udevadm could not be found.";
 			error=1; }
 
-	type dd >/dev/null 2>&1 &&
+	type dd >/dev/null 2>&1 ||
 		type ddrescue >/dev/null 2>&1 ||
 		{ warn "Dependency error:" \
 			"Neither dd nor ddrescue could be found." && error=1; }
