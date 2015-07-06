@@ -1,1 +1,1 @@
-default -1 default -1 = /home/default /bin/bash audio,video The default BSP user
+default -1 default -1 =password /home/default /bin/bash audio,video The default BSP user

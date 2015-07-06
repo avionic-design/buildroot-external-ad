@@ -104,3 +104,11 @@ and writes the filesystem image:
 
 When the process has completed, exit UMS in u-boot by hitting Ctrl-C.
 The system is now ready to boot from the eMMC.
+
+5. Default password for root and the default user
+
+The two buildroot configurations meerkat-l4t_defconfig and
+meerkat-l4t-bsp_defconfig install passwords for root and the default
+user.
+
+Use "password" to login.
