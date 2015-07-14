@@ -32,6 +32,8 @@ define NVIDIA_GST_INSTALL_STAGING_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/*.so.0 $(STAGING_DIR)/usr/lib/
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-0.10/*.so $(STAGING_DIR)/usr/lib/gstreamer-0.10/
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-1.0/*.so $(STAGING_DIR)/usr/lib/gstreamer-1.0/
+	$(INSTALL) -d $(STAGING_DIR)/etc/xdg
+	$(INSTALL) -D -m 0644 $(@D)/etc/xdg/gstomx.conf $(STAGING_DIR)/etc/xdg
 endef
 
 define NVIDIA_GST_INSTALL_TARGET_CMDS
@@ -40,6 +42,8 @@ define NVIDIA_GST_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/*.so.0 $(TARGET_DIR)/usr/lib/
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-0.10/*.so $(TARGET_DIR)/usr/lib/gstreamer-0.10/
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/arm-linux-gnueabihf/gstreamer-1.0/*.so $(TARGET_DIR)/usr/lib/gstreamer-1.0/
+	$(INSTALL) -d $(STAGING_DIR)/etc/xdg
+	$(INSTALL) -D -m 0644 $(@D)/etc/xdg/gstomx.conf $(TARGET_DIR)/etc/xdg
 
 	$(INSTALL) -d $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 0755 $(@D)/usr/bin/nvgst{capture,player}-{0.10,1.0} $(TARGET_DIR)/usr/bin; \
