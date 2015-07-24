@@ -1,0 +1,4 @@
+config BR2_PACKAGE_NVIDIA_CFVC
+	bool "nvidia-cfvc"
+	help
+		Binary userland libraries for camera capturing plus tinycamera example app
