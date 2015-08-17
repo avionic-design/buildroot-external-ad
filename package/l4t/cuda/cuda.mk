@@ -1,8 +1,8 @@
 CUDA_VERSION = 6.5
-CUDA_SITE = http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers
-CUDA_SOURCE = cuda-repo-l4t-r21.2-6-5-prod_6.5-42_armhf.deb
+CUDA_SITE = http://developer.download.nvidia.com/embedded/L4T/r21_Release_v3.0/
+CUDA_SOURCE = cuda-repo-l4t-r21.3-6-5-prod_6.5-42_armhf.deb
 CUDA_LICENSE = EULA
-CUDA_LICENSE_FILES = $(notdir $(tempdir-repo-root))/usr/share/doc/cuda-repo-l4t-r21.2-6-5-prod/copyright
+CUDA_LICENSE_FILES = $(notdir $(tempdir-repo-root))/usr/share/doc/cuda-repo-l4t-r21.3-6-5-prod/copyright
 CUDA_REDISTRIBUTE = NO
 
 CUDA_INSTALL_TARGET = YES
