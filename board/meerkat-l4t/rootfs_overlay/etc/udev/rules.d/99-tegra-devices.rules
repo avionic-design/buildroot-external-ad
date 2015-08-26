@@ -1,5 +1,4 @@
 ACTION=="remove" GOTO="nvidia_end"
-KERNEL=="camera.pcl", RUN+="/usr/sbin/camera_device_detect"
 
 # root only devices
 KERNEL=="knvrm" OWNER="root" GROUP="root" MODE="0660"
