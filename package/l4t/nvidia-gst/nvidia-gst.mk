@@ -13,6 +13,7 @@ NVIDIA_GST_LICENSE = custom
 NVIDIA_GST_LICENSE_FILES = LICENSE
 NVIDIA_GST_INSTALL_STAGING = YES
 NVIDIA_GST_INSTALL_TARGET = YES
+NVIDIA_GST_STRIP_COMPONENTS = 2
 
 nvidia-gst-stage2-tarball := nv_sample_apps/nvgstapps.tbz2
 nvidia-gst-stage1-unpack-these := $(addprefix Linux_for_Tegra/nv_tegra/, \
@@ -20,7 +21,7 @@ nvidia-gst-stage1-unpack-these := $(addprefix Linux_for_Tegra/nv_tegra/, \
 
 define NVIDIA_GST_EXTRACT_CMDS
 	$(call suitable-extractor,$(NVIDIA_GST_SOURCE)) $(DL_DIR)/$(NVIDIA_GST_SOURCE) | \
-	$(TAR) -C $(NVIDIA_GST_DIR) $(TAR_STRIP_COMPONENTS)=2 $(TAR_OPTIONS) - $(nvidia-gst-stage1-unpack-these)
+	$(TAR) -C $(NVIDIA_GST_DIR) --strip-components=$(NVIDIA_GST_STRIP_COMPONENTS) $(TAR_OPTIONS) - $(nvidia-gst-stage1-unpack-these)
 	$(call suitable-extractor,$(nvidia-gst-stage2-tarball)) $(NVIDIA_GST_DIR)/$(nvidia-gst-stage2-tarball) | \
 	$(TAR) -C $(NVIDIA_GST_DIR) $(TAR_OPTIONS) -
 	$(RM) -r $(NVIDIA_GST_DIR)/$(dir $(nvidia-gst-stage2-tarball))
