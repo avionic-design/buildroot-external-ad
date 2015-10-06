@@ -1,2 +1,1 @@
-source "$BR2_EXTERNAL/package/lib/libglu/Config.in"
 source "$BR2_EXTERNAL/package/lib/freeglut/Config.in"
