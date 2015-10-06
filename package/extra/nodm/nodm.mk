@@ -5,7 +5,7 @@
 ################################################################################
 
 NODM_VERSION = 0.7
-NODM_SITE = http://www.enricozini.org/sw/nodm/
+NODM_SITE = http://www.enricozini.org/sw/nodm
 NODM_LICENSE = GPLv2
 NODM_LICENSE_FILES = COPYING
 NODM_DEPENDENCIES = linux-pam
