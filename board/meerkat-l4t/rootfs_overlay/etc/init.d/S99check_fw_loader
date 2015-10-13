@@ -1,0 +1,24 @@
+#!/bin/sh
+
+case "$1" in
+	start)
+		zcat /proc/config.gz | grep -q "CONFIG_FW_LOADER_USER_HELPER=y" && \
+			printf '%s\n%s\n%s\n' \
+				'WARNING: Detected kernel with CONFIG_FW_LOADER_USER_HELPER enabled.' \
+				'This will cause system stalls whenever the kernel tries to load' \
+				'firmware, ie when the nvidia X driver tries to load GK20A firmware.' > \
+				/etc/motd ||
+			rm -f /etc/motd
+		;;
+	stop)
+		rm /etc/motd
+		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	*)
+		echo "usage: $0 {start|stop|restart}"
+		;;
+esac
