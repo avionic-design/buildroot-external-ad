@@ -45,6 +45,7 @@ define NVIDIA_DRIVERS_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/etc/profile.d
 	$(INSTALL) -m 644 $(NVIDIA_DRIVERS_DIR)/set-ld-library-path.sh $(TARGET_DIR)/etc/profile.d
 	$(INSTALL) -D -m 0755 $(@D)/usr/lib/xorg/modules/drivers/nvidia_drv.so $(TARGET_DIR)/usr/lib/xorg/modules/drivers/nvidia_drv.so
+	$(INSTALL) -d $(TARGET_DIR)/usr/lib/xorg/modules/extensions/
 	ln -sf ../../../tegra/libglx.so $(TARGET_DIR)/usr/lib/xorg/modules/extensions/libglx.so
 	ln -sf libGL.so.1 $(TARGET_DIR)/usr/lib/tegra/libGL.so
 	ln -sf libcuda.so.1.1 $(TARGET_DIR)/usr/lib/tegra/libcuda.so
