@@ -1,0 +1,26 @@
+#!/bin/sh
+
+case "$1" in
+	start)
+		echo -n "Starting connman ... "
+		NFS_HOST=`mount | grep "on / type nfs" | awk -F'[:]+' '{print $1}'`
+		[ ! -z $NFS_HOST ] && NFS_IFACE=`ip route get $NFS_HOST | awk '{print $3}'`
+		[ ! -z $NFS_IFACE ] && NFS_ARGS="-I $NFS_IFACE" && NFS_MSG=" (ignoring $NFS_IFACE)"
+
+		start-stop-daemon -S -q -m -b -p /var/run/connmand.pid --exec /usr/sbin/connmand -- -n $NFS_ARGS
+		echo "done.$NFS_MSG"
+		;;
+	stop)
+		echo -n "Stopping connman ..."
+		start-stop-daemon -K -q -p /var/run/connmand.pid
+		echo "done."
+		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	*)
+		echo "usage: $0 {start|stop|restart}"
+		;;
+esac
