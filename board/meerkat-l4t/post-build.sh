@@ -16,3 +16,8 @@ if test -d "./$BASE_DIR"; then
 	echo "Removing leftover directory tree ./$BASE_DIR"
 	rmdir -p --ignore-fail-on-non-empty "./$BASE_DIR"
 fi
+
+echo "Enabling ssh root login with password."
+sed -ie '/^#PermitRootLogin/c\
+PermitRootLogin yes
+' etc/ssh/sshd_config
