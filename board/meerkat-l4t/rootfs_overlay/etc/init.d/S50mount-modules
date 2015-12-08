@@ -1,0 +1,47 @@
+#!/bin/sh
+
+MOUNT_TYPE=
+MOUNT_OPTS=ro,relatime
+
+# Get the kernel version
+rev=$(uname -r)
+[ -n "$rev" ] || exit 1
+
+# Check if the module dir already exists and is not empty
+dir="/lib/modules/$rev"
+[ -f "$dir/modules.dep" ] && exit 0
+
+# Look for the /lib command line argument
+lib=
+for c in $(cat /proc/cmdline); do
+	key=$(echo "$c" | cut -s -d = -f 1)
+	if [ "$key" = '/lib' ] ; then
+		lib=$(echo "$c" | cut -s -d = -f 2-)
+		break
+	fi
+done
+[ -n "$lib" ] || exit 0
+lib="$lib/modules/$rev"
+
+# Extract the server if there is one
+srv=$(echo "$lib" | cut -s -d : -f 1)
+if [ -n "$srv" ] ; then
+	MOUNT_TYPE=nfs
+	MOUNT_OPTS="$MOUNT_OPTS,nolock,addr=$srv"
+fi
+
+case "$1" in
+	start)
+		[ -d "$dir" ] || mkdir -p "$dir" || exit
+		echo "Mounting modules to $dir"
+		mount ${MOUNT_TYPE:+-t $MOUNT_TYPE} ${MOUNT_OPTS:+-o $MOUNT_OPTS} "$lib" "$dir"
+		;;
+	stop)
+		[ -d "$dir" ] || exit
+		echo "Unmounting modules from $dir"
+		umount "$dir"
+		;;
+	*)
+		echo "usage: $0 {start|stop}"
+		;;
+esac
