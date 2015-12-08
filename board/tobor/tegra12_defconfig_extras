@@ -1,0 +1,27 @@
+# Disable wifi in-kernel to avoid backports conflicts
+
+# CONFIG_CFG80211 is not set
+# CONFIG_NL80211_TESTMODE is not set
+# CONFIG_CFG80211_WEXT is not set
+# CONFIG_MAC80211 is not set
+# CONFIG_WIRELESS is not set
+# CONFIG_IWLWIFI is not set
+# CONFIG_IWLMVM is not set
+# CONFIG_RTLWIFI is not set
+# CONFIG_RTL8192CE is not set
+# CONFIG_RTL8192SE is not set
+# CONFIG_RTL8192DE is not set
+# CONFIG_RTL8723AE is not set
+# CONFIG_RTL8188EE is not set
+# CONFIG_RTL8192CU is not set
+
+# Dependencies for mac80211
+CONFIG_CRYPTO_NULL=y
+CONFIG_CRYPTO_GCM=m
+CONFIG_CRYPTO_CTR=y
+CONFIG_CRYPTO_GHASH=y
+CONFIG_AVERAGE=y
+
+# Dependency fixes beause of make oldconfig use
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
