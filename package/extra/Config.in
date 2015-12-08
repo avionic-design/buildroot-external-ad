@@ -1,1 +1,2 @@
+source "$BR2_EXTERNAL/package/extra/dfu-programmer/Config.in"
 source "$BR2_EXTERNAL/package/extra/nodm/Config.in"
