@@ -5,9 +5,9 @@ Buildroot external overlay for Avionic Design Meerkat-based systems. Contains
 support for building a root-filesystem including Linux4Tegra binary driver
 support.
 
-For l4t compatibility buildroot-2014.05 has to be used as base, as later
-buildroot releases contain components (especially Xorg) in newer version than
-l4t supports.
+The officially supported buildroot version is currently 2015.11, but
+version 2015.08 is also known to work and anything newer than that
+should be ok.
 
 Quickstart
 ==========
@@ -27,7 +27,7 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 # git clone https://github.com/avionic-design/buildroot-external-ad.git
 # git clone git://git.buildroot.net/buildroot
 # cd ${WORKING_DIR}/buildroot
-# git checkout -b 2014.05 2014.05
+# git checkout -b 2015.11 2015.11
 
 2. Prepare build
 
