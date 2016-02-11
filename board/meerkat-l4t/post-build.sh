@@ -17,7 +17,10 @@ if test -d "./$BASE_DIR"; then
 	rmdir -p --ignore-fail-on-non-empty "$(realpath ./"$BASE_DIR")"
 fi
 
-echo "Enabling ssh root login with password."
-sed -ie '/^#PermitRootLogin/c\
+if [ -e etc/ssh/sshd_config ]
+then
+	echo "Enabling ssh root login with password."
+	sed -ie '/^#PermitRootLogin/c\
 PermitRootLogin yes
 ' etc/ssh/sshd_config
+fi
