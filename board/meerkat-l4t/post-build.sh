@@ -14,7 +14,7 @@ if test -d "./$HOST_DIR"; then
 fi
 if test -d "./$BASE_DIR"; then
 	echo "Removing leftover directory tree ./$BASE_DIR"
-	rmdir -p --ignore-fail-on-non-empty "$(realpath ./"$BASE_DIR")"
+	rmdir -p --ignore-fail-on-non-empty "$(readlink -f ./"$BASE_DIR")"
 fi
 
 if [ -e etc/ssh/sshd_config ]
