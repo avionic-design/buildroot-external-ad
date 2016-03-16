@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# The update tool
+UPDATER=/usr/bin/meerkat-updater
+
+# Check if the HDMI is plugged in if so we run on the first virtual terminal
+# if HDMI isn't plugged we run on ttyS0. In the latter case we need getty
+# to have a real tty to allow us to get the user input.
+HDMI_STATE_REGEXP=' hdmi_state_machine_worker (tid [0-9a-f]*): state '
+if dmesg | grep "$HDMI_STATE_REGEXP" | tail -n 1 | grep -q '(Enabled)' ; then
+	export TERM=linux
+	RUN_UPDATER="openvt -c 1 $UPDATER"
+else
+	RUN_UPDATER="getty -L -i -n -l $UPDATER ttyS0 0 vt100"
+fi
+
+case "$1" in
+	start)
+		echo "Starting Meerkat Updater"
+		$RUN_UPDATER
+		;;
+	*)
+		echo "Usage: $0 start"
+		exit 1
+		;;
+esac

@@ -1,0 +1,265 @@
+#!/bin/sh
+
+# Let a pipe fails if one program failed
+set -o pipefail
+
+# Don't allow stopping the script on Ctrl-C and similar
+trap '' INT QUIT TERM
+
+# Default config
+DISK=/dev/disk/by-path/platform-sdhci-tegra.3
+
+# List of the partitions to create
+PARTITIONS="rootfs"
+# For each partition: fs-type start end
+PARTITION_rootfs="ext4 0% 100%"
+
+DIALOG_SIZE="6 80"
+
+# Abort the script if a step fails
+die() {
+	# Make sure we unmount everything
+	foreach PARTITION umount_fs 2> /dev/null
+	umount_fs updater 2> /dev/null
+	# Show the user the error meesage
+	dialog --msgbox "$1" $DIALOG_SIZE
+	reboot
+}
+
+# All commands needed to write the partition table
+foreach() {
+	local name="$1"
+	local list
+	local item
+	local value
+
+	shift
+
+	eval list=\"\${${name}S}\"
+	for item in $list ; do
+		eval value=\"\${${name}_${item}}\"
+		"$@" "$item" "$value"
+	done
+}
+
+single_step() {
+	echo 0 >&2 && "$@" && echo 100 >&2
+}
+
+run_progress_command() {
+	local msg="$1"
+	shift
+
+	( "$@" ) 2>&1 | dialog --gauge "$msg" $DIALOG_SIZE || \
+		die "$msg failed. Please press enter to reboot."
+}
+
+# Check a partition definition for validity
+check_partition() {
+	if [ $(echo "$2" | wc -w) -ne 3 ] ; then
+		die "Partition $1 has an invalid config"
+	fi
+}
+
+# Generate a list of command for parted
+parted_commands() {
+	echo mklabel gpt
+	foreach PARTITION echo mkpart
+}
+
+# Function to create filesystems
+mkfs_ext2() {
+	mkfs.ext2 -q -L "$2" "$1"
+}
+
+mkfs_ext3() {
+	mkfs.ext3 -q -L "$2" "$1"
+}
+
+mkfs_ext4() {
+	mkfs.ext4 -q -L "$2" "$1"
+}
+
+mkfs_swap() {
+	mkswap -L "$2" "$1"
+}
+
+# Unpack a tarball with progress report
+untar() {
+	pv -n "$1" | tar --warning=no-timestamp -C "$2" -zx
+}
+
+copy() {
+	pv -n "$1" > "$2"
+}
+
+wait_for_file() {
+	local count=0
+	until [ -e "$1" ] ; do
+		[ $count -ge 10 ] && die "Timed out waiting for $2"
+		count=$((count+1))
+		sleep 1
+	done
+}
+
+# Wrapper that create the filesystem in a partition
+create_fs() {
+	# Expand the partitions parameters to positional arguments
+	set -- $1 $2
+
+	"mkfs_$2" "/dev/disk/by-partlabel/$1" "$1"
+}
+
+mount_fs() {
+	local dev="$(readlink -f "/dev/disk/by-partlabel/$1")"
+
+	mkdir -p "/mnt/$1" && mount "$dev" "/mnt/$1"
+}
+
+install_fs() {
+	local src=/mnt/updater
+	local mnt="/mnt/$1"
+	local dev="$(readlink -f "/dev/disk/by-partlabel/$1")"
+
+	if [ -x "$src/$1-pre-install.sh" ] ; then
+		"$src/$1-pre-install.sh" "$src" "$mnt" "$dev" || return
+	fi
+
+	untar "$src/$1.tar.gz" "$mnt" || return
+
+	if [ -x "$src/$1-post-install.sh" ] ; then
+		"$src/$1-post-install.sh" "$src" "$mnt" "$dev" || return
+	fi
+}
+
+umount_fs() {
+	umount "/mnt/$1" && rm -rf "/mnt/$1"
+}
+
+partition_post_install() {
+	local src=/mnt/updater
+	local mnt="/mnt/$1"
+	local dev="$(readlink -f "/dev/disk/by-partlabel/$1")"
+
+	echo 0 >&2
+	mount_fs "$1" || return
+	"$src/$1-post-install.sh" "$src" "$mnt" "$dev" || return
+	umount_fs "$1"
+	echo 100 >&2
+}
+
+run_partition_post_install() {
+	local src=/mnt/updater
+
+	if [ -x "$src/$1-post-install.sh" ] ; then
+		run_progress_command "$1 post install script" \
+			partition_post_install "$@"
+	fi
+}
+
+fill_partition_tarball() {
+	run_progress_command "Creating $1 filesystem" single_step \
+		create_fs "$@"
+	run_progress_command "Mounting $1" single_step \
+		mount_fs "$@"
+	run_progress_command "Installing $1" \
+		install_fs "$@"
+	run_progress_command "Unmounting $1" single_step \
+		umount_fs "$@"
+}
+
+fill_partition_fastboot() {
+	local src=/mnt/updater
+	local dev="$(readlink -f "/dev/disk/by-partlabel/$1")"
+
+	run_progress_command "Installing $1" \
+		fastboot-write "$src/$1.img" "$dev"
+
+	run_partition_post_install "$@"
+}
+
+fill_partition_e2fs() {
+	local dev="$(readlink -f "/dev/disk/by-partlabel/$1")"
+	local img="$3"
+
+	run_progress_command "Installing $1" copy "$img" "$dev"
+	run_progress_command "Resizing filesystem on $dev" single_step \
+		resize2fs "$dev"
+
+	run_partition_post_install "$@"
+}
+
+fill_partition() {
+	local src=/mnt/updater
+
+	# Wait for udev to add the symlink
+	wait_for_file "/dev/disk/by-partlabel/$1" "partition $1"
+
+	if [ -f "$src/$1.img" ] ; then
+		fill_partition_fastboot "$@"
+	elif [ -f "$src/$1.ext4" ] ; then
+		fill_partition_e2fs "$@" "$src/$1.ext4"
+	elif [ -f "$src/$1.ext3" ] ; then
+		fill_partition_e2fs "$@" "$src/$1.ext3"
+	elif [ -f "$src/$1.ext2" ] ; then
+		fill_partition_e2fs "$@" "$src/$1.ext2"
+	elif [ -f "$src/$1.tar.gz" ] ; then
+		fill_partition_tarball "$@"
+	else
+		run_progress_command "Creating $1 filesystem" single_step \
+			create_fs "$@"
+	fi
+}
+
+mount_updater() {
+	local label=
+	echo 0 >&2
+	while true; do
+		for label in updater Updater UPDATER ; do
+			[ -L /dev/disk/by-label/$label ] && break 2
+		done
+		sleep 1
+	done
+	echo 50 >&2
+	mount -o ro /dev/disk/by-label/$label /mnt/updater
+	echo 100 >&2
+}
+
+# Get the updater itself
+run_progress_command "Mounting updater" mount_updater
+
+# Load the updater config
+if [ -f /mnt/updater/updater.cfg ]; then
+	. /mnt/updater/updater.cfg 2> /dev/null || \
+		die "Failed to load updater config"
+fi
+
+# Check the partitions configs
+if [ -z "$PARTITIONS" ]; then
+	die "No partition is defined"
+fi
+foreach PARTITION check_partition
+
+run_progress_command "Creating partition table" single_step \
+	parted -a none -s $DISK -- $(parted_commands)
+
+# Run global pre-install script
+if [ -x /mnt/updater/pre-install.sh ] ; then
+	run_progress_command "Pre-install script" \
+		/mnt/updater/pre-install.sh
+fi
+
+# Fill all the partitions
+foreach PARTITION fill_partition
+
+# Run global post-install script
+if [ -x /mnt/updater/post-install.sh ] ; then
+	 run_progress_command "Running post-install script" \
+		 /mnt/updater/post-install.sh
+fi
+
+# Done
+umount_fs updater
+dialog --msgbox "Update successful, please remove the install media and press enter to reboot" \
+	$DIALOG_SIZE
+reboot
