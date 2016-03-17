@@ -5,7 +5,7 @@ BR2_ARM_INSTRUCTIONS_THUMB2=y
 BR2_LUAROCKS_MIRROR="http://luarocks.org/repositories/rocks"
 BR2_CPAN_MIRROR="http://search.cpan.org/CPAN"
 BR2_CCACHE=y
-BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL)/patches"
+BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL)/patches $(BR2_EXTERNAL)/board/wizarm/kexec-bootloader/patches"
 BR2_KERNEL_HEADERS_3_10=y
 BR2_TOOLCHAIN_BUILDROOT_WCHAR=y
 # BR2_UCLIBC_INSTALL_UTILS is not set

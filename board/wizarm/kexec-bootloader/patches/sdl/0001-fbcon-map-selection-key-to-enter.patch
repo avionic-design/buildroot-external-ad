@@ -1,0 +1,70 @@
+From 399199e313b9ffe3d781aa5d0cea709f99fa4f0b Mon Sep 17 00:00:00 2001
+From: Nikolaus Schulz <nikolaus.schulz@avionic-design.de>
+Date: Wed, 16 Mar 2016 13:31:53 +0100
+Subject: [PATCH] fbcon: fbcon: Map selection key to enter
+
+fbcon doesn't handle keycodes >127, which means it doesn't understand
+the selection key, which is what the kernel emits when a HID input
+device reports the "Menu Pick" usage.  Hack the keyboard handler to map
+the selection key to enter.
+
+Signed-off-by: Nikolaus Schulz <nikolaus.schulz@avionic-design.de>
+---
+ src/video/fbcon/SDL_fbevents.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/src/video/fbcon/SDL_fbevents.c b/src/video/fbcon/SDL_fbevents.c
+index 5e369a4..fd15461 100644
+--- a/src/video/fbcon/SDL_fbevents.c
++++ b/src/video/fbcon/SDL_fbevents.c
+@@ -39,6 +39,7 @@
+ #include <linux/vt.h>
+ #include <linux/kd.h>
+ #include <linux/keyboard.h>
++#include <linux/input.h>
+ 
+ #include "SDL_timer.h"
+ #include "SDL_mutex.h"
+@@ -1007,6 +1008,20 @@ static void handle_keyboard(_THIS)
+ 		} else {
+ 			pressed = SDL_PRESSED;
+ 		}
++
++		if (scancode == 0) {
++			/* Zero signals an extended medium raw keycode
++			 * >127, encoded as three bytes zero, high 7 bits,
++			 * low 7 bits.  The "key-up" flag is added as MSB
++			 * to the leading zero if needed. The two
++			 * followup bytes always have the MSB bit set.
++			 * See the kbd_keycode() function in the kernel
++			 * keyboard driver. */
++
++			scancode = (keybuf[++i] & 0x7f) << 7;
++			scancode |= keybuf[++i] & 0x7f;
++		}
++
+ 		TranslateKey(scancode, &keysym);
+ 		/* Handle Ctrl-Alt-FN for vt switch */
+ 		switch (keysym.sym) {
+@@ -1214,9 +1229,17 @@ static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym)
+ {
+ 	/* Set the keysym information */
+ 	keysym->scancode = scancode;
+-	keysym->sym = keymap[scancode];
+ 	keysym->mod = KMOD_NONE;
+ 
++	if (scancode < SDL_arraysize(keymap)) {
++		keysym->sym = keymap[scancode];
++	} else if (scancode == KEY_SELECT) {
++		/* Hack: map select key to enter. */
++		keysym->sym = SDLK_RETURN;
++	} else {
++		keysym->sym = SDLK_UNKNOWN;
++	}
++
+ 	/* If UNICODE is on, get the UNICODE value for the key */
+ 	keysym->unicode = 0;
+ 	if ( SDL_TranslateUNICODE ) {
+-- 
+2.1.4
+
