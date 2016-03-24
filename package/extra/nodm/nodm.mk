@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-NODM_VERSION = 0.7
-NODM_SITE = http://www.enricozini.org/sw/nodm
+# nodm v0.7 is not tagged on github
+NODM_VERSION = 5cc4b689bd0f864a50f40a2b27f5c752b1d3ca76
+NODM_SITE = $(call github,spanezz,nodm,$(NODM_VERSION))
 NODM_LICENSE = GPLv2
 NODM_LICENSE_FILES = COPYING
 NODM_DEPENDENCIES = linux-pam
 NODM_INSTALL_STAGING = NO
+NODM_AUTORECONF = YES
 
 define NODM_INSTALL_EXTRA
 	$(INSTALL) -D -m 0755 $(BR2_EXTERNAL)/package/extra/nodm/S90nodm \
