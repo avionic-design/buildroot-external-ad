@@ -79,6 +79,16 @@ uImage-tegra124-kein-baseboard can be loaded by u-boot to boot the kernel.
 rootfs.tar or rootfs.ext4 contains a root filesystem including Xorg and
 nvidia L4T drivers.
 
+Note that the initial build will pull the latest kernel by Avionic
+Design from github, while later builds will automatically re-use a
+cached tarball of that kernel.  In order to pull an updated kernel from
+github, remove both the cached tarball and the linux kernel build
+directory before triggering a rebuild:
+
+# rm dl/linux-meerkat_l4t-r21-4.tar.gz
+# rm -rf build/meerkat-rootfs/build/linux-meerkat_l4t-r21-4
+# make linux
+
 4. Flash the rootfs onto the eMMC
 
 In order to flash the root filesystem onto the eMMC on the Meerkat COM,
