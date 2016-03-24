@@ -105,6 +105,14 @@ and writes the filesystem image:
 When the process has completed, exit UMS in u-boot by hitting Ctrl-C.
 The system is now ready to boot from the eMMC.
 
+If there are existing partitions on the eMMC and you are running a
+desktop system that auto-mounts them, the script flash.sh will fail and
+complain about partitions on the device being used.  If the device is
+e.g. /dev/sdb, umount any partitions /dev/sdb* (with *=1,2,...) and
+repeat.  Note that using the "eject" feature of your desktop environment
+may power down the USB port the board is connected to; better umount on
+the command line instead.
+
 5. Default password for root and the default user
 
 The two buildroot configurations meerkat-l4t_defconfig and
