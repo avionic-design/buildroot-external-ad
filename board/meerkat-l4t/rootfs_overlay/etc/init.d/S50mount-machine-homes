@@ -1,0 +1,50 @@
+#!/bin/sh
+
+BASEDIR=/opt/homes
+DIRS="/root /home"
+
+# Check if we booted from nfs
+grep -qw root=/dev/nfs /proc/cmdline || exit 0
+
+# Try to get the device used for the NFS root
+srv=$(grep -ow 'nfsroot=[^ ]*' /proc/cmdline | cut -d = -f 2 | cut -d : -f 1)
+[ -n "$srv" ] && \
+	dev=$(ip route get $srv | grep -ow 'dev [^ ]*' | cut -d ' ' -f 2)
+# Fallback on eth0 if none was found
+[ -n "$dev" ] || \
+	dev=eth0
+
+# Get the MAC from the device
+mac=$(cat /sys/class/net/$dev/address 2> /dev/null)
+[ -n "$mac" ] || exit 1
+
+BASEDIR="$BASEDIR/$mac"
+
+bind_home_dir() {
+	# Create and copy the directory if needed
+	if [ ! -e "$BASEDIR$1" ] ; then
+		echo "Creating $BASEDIR$1"
+		mkdir -p "$BASEDIR" && cp -a "$1" "$BASEDIR" || return
+	fi
+	# Bind mount the machine specific directory
+	echo "Mounting $1"
+	mount --bind "$BASEDIR$1" "$1"
+}
+
+case "$1" in
+	start)
+		for dir in $DIRS ; do
+			bind_home_dir "$dir"
+		done
+		;;
+	stop)
+		for dir in $DIRS ; do
+			echo "Unmounting $dir"
+			umount -l "$dir"
+		done
+		;;
+	*)
+		echo "usage: $0 {start|stop}"
+		exit 1
+		;;
+esac
