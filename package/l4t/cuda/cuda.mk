@@ -2,58 +2,58 @@ CUDA_VERSION = 6.5
 CUDA_SITE = http://developer.download.nvidia.com/embedded/L4T/r21_Release_v3.0
 CUDA_SOURCE = cuda-repo-l4t-r21.3-6-5-prod_6.5-42_armhf.deb
 CUDA_LICENSE = EULA
-CUDA_LICENSE_FILES = $(notdir $(tempdir-repo-root))/usr/share/doc/cuda-repo-l4t-r21.3-6-5-prod/copyright
+CUDA_LICENSE_FILES = $(notdir $(cuda-tempdir-repo-root))/usr/share/doc/cuda-repo-l4t-r21.3-6-5-prod/copyright
 CUDA_REDISTRIBUTE = NO
 
 CUDA_INSTALL_TARGET = YES
 CUDA_INSTALL_STAGING = YES
 
-package-basenames := cuda-cublas cuda-cudart cuda-cufft cuda-curand \
+cuda-package-basenames := cuda-cublas cuda-cudart cuda-cufft cuda-curand \
 	cuda-cusparse cuda-npp
 
-dash-version := $(subst .,-,$(CUDA_VERSION))
-target-package-names := $(addsuffix -$(dash-version),$(package-basenames))
-staging-package-names := $(addsuffix -dev-$(dash-version),$(package-basenames))
+cuda-dash-version := $(subst .,-,$(CUDA_VERSION))
+cuda-target-package-names := $(addsuffix -$(cuda-dash-version),$(cuda-package-basenames))
+cuda-staging-package-names := $(addsuffix -dev-$(cuda-dash-version),$(cuda-package-basenames))
 
-tempdir-repo-root = $(CUDA_DIR)/repo
-tempdir-repo      = $(tempdir-repo-root)/var/cuda-repo-$(dash-version)-prod
+cuda-tempdir-repo-root = $(CUDA_DIR)/repo
+cuda-tempdir-repo      = $(cuda-tempdir-repo-root)/var/cuda-repo-$(cuda-dash-version)-prod
 
-tempdir-target  = $(CUDA_DIR)/for-target
-tempdir-staging = $(CUDA_DIR)/for-staging
+cuda-tempdir-target  = $(CUDA_DIR)/for-target
+cuda-tempdir-staging = $(CUDA_DIR)/for-staging
 
-define unpack-debfile-to
+define cuda-unpack-debfile-to
 	ar p $(1) data.tar.gz | $(TAR) -C '$(2)' -z $(TAR_OPTIONS) -
 endef
 
-define unpack-debian-packages-by-name-to
+define cuda-unpack-debian-packages-by-name-to
 	mkdir -p '$(2)'
-	set -e; cd '$(tempdir-repo)' && \
+	set -e; cd '$(cuda-tempdir-repo)' && \
 	for packname in $(1); do \
-		$(call unpack-debfile-to,$${packname}*.deb,$(2)); \
+		$(call cuda-unpack-debfile-to,$${packname}*.deb,$(2)); \
 	done
 endef
 
 define CUDA_EXTRACT_CMDS
-	mkdir -p '$(tempdir-repo-root)'
-	$(call unpack-debfile-to,$(DL_DIR)/$(CUDA_SOURCE),$(tempdir-repo-root))
-	$(call unpack-debian-packages-by-name-to,$(target-package-names),$(tempdir-target))
-	$(call unpack-debian-packages-by-name-to,$(staging-package-names),$(tempdir-staging))
+	mkdir -p '$(cuda-tempdir-repo-root)'
+	$(call cuda-unpack-debfile-to,$(DL_DIR)/$(CUDA_SOURCE),$(cuda-tempdir-repo-root))
+	$(call cuda-unpack-debian-packages-by-name-to,$(cuda-target-package-names),$(cuda-tempdir-target))
+	$(call cuda-unpack-debian-packages-by-name-to,$(cuda-staging-package-names),$(cuda-tempdir-staging))
 endef
 
-define install-from-to
+define cuda-install-from-to
 	cd '$(1)' && find . \
 		-path ./usr/share/lintian -prune -o -print0 | \
 		cpio -p0dum '$(2)'
 endef
 
 define CUDA_INSTALL_TARGET_CMDS
-	$(call install-from-to,$(tempdir-target),$(TARGET_DIR))
+	$(call cuda-install-from-to,$(cuda-tempdir-target),$(TARGET_DIR))
 	ln -Tsf cuda-$(CUDA_VERSION) '$(TARGET_DIR)/usr/local/cuda'
 endef
 
 define CUDA_INSTALL_STAGING_CMDS
-	$(call install-from-to,$(tempdir-target),$(STAGING_DIR))
-	$(call install-from-to,$(tempdir-staging),$(STAGING_DIR))
+	$(call cuda-install-from-to,$(cuda-tempdir-target),$(STAGING_DIR))
+	$(call cuda-install-from-to,$(cuda-tempdir-staging),$(STAGING_DIR))
 	ln -Tsf cuda-$(CUDA_VERSION) '$(STAGING_DIR)/usr/local/cuda'
 endef
 

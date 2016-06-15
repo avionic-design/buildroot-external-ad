@@ -8,8 +8,8 @@ NVIDIA_ISLANDGL_DEPENDENCIES = nvidia-drivers
 NVIDIA_ISLANDGL_EXTRA_DOWNLOADS = $(NVIDIA_ISLANDGL_LICENSE_FILES)
 NVIDIA_ISLANDGL_STRIP_COMPONENTS = 1
 
-lib-dir := /usr/lib/nvidia-islandGL
-data-dir := /usr/share/nvidia-islandGL
+nvidia-islandgl-lib-dir := /usr/lib/nvidia-islandGL
+nvidia-islandgl-data-dir := /usr/share/nvidia-islandGL
 
 define NVIDIA_ISLANDGL_EXTRACT_CMDS
 	$(TAR) -C $(NVIDIA_ISLANDGL_DIR) --strip-components=$(NVIDIA_ISLANDGL_STRIP_COMPONENTS) \
@@ -18,11 +18,11 @@ define NVIDIA_ISLANDGL_EXTRACT_CMDS
 endef
 
 define NVIDIA_ISLANDGL_INSTALL_TARGET_CMDS
-	$(INSTALL) -d $(TARGET_DIR)$(data-dir)
+	$(INSTALL) -d $(TARGET_DIR)$(nvidia-islandgl-data-dir)
 	tar -C $(NVIDIA_ISLANDGL_DIR) -cO shaders textures | \
-		tar -C $(TARGET_DIR)$(data-dir) -xf -
-	$(INSTALL) -d $(TARGET_DIR)$(lib-dir)
-	$(INSTALL) $(NVIDIA_ISLANDGL_DIR)/islandGL $(TARGET_DIR)$(lib-dir)
+		tar -C $(TARGET_DIR)$(nvidia-islandgl-data-dir) -xf -
+	$(INSTALL) -d $(TARGET_DIR)$(nvidia-islandgl-lib-dir)
+	$(INSTALL) $(NVIDIA_ISLANDGL_DIR)/islandGL $(TARGET_DIR)$(nvidia-islandgl-lib-dir)
 	$(INSTALL) $(NVIDIA_ISLANDGL_DIR)/nvidia-islandGL $(TARGET_DIR)/usr/bin
 endef
 

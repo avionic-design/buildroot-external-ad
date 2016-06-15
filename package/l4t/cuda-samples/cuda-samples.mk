@@ -5,8 +5,6 @@ CUDA_SAMPLES_LICENSE = EULA
 CUDA_SAMPLES_REDISTRIBUTE = NO
 CUDA_SAMPLES_DEPENDENCIES = cuda
 
-dash-version := $(subst .,-,$(CUDA_SAMPLES_VERSION))
-
 cuda-samples-bindir = /usr/local/cuda-$(CUDA_SAMPLES_VERSION)/samples/bin
 
 define CUDA_SAMPLES_INSTALL_TARGET_CMDS
