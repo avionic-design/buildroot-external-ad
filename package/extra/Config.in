@@ -1,4 +1,5 @@
 source "$BR2_EXTERNAL/package/extra/dfu-programmer/Config.in"
+source "$BR2_EXTERNAL/package/extra/eeupdate32/Config.in"
 source "$BR2_EXTERNAL/package/extra/fastboot-write/Config.in"
 source "$BR2_EXTERNAL/package/extra/nodm/Config.in"
 source "$BR2_EXTERNAL/package/extra/irqbalance-imx/Config.in"
