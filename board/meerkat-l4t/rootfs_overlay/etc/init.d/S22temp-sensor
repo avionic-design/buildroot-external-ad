@@ -1,0 +1,80 @@
+#!/bin/sh
+
+temp_sensor_name=tmp451
+
+temp_sensor_fields="temp1_min temp1_max temp1_crit temp1_crit_hyst"
+temp_sensor_fields="$temp_sensor_fields temp2_min temp2_max temp2_crit"
+
+get_sysfs_device() {
+	local base="$1"
+	local prop="$2"
+	local val="$3"
+
+	for dev in $base/* ; do
+		if [ "$(cat $dev/$prop)" = "$val" ]; then
+			echo "$dev"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+get_sysfs_property() {
+	local base="$1"
+	local mask="$2"
+	local val="$3"
+
+	for prop in $base/$mask ; do
+		if [ "$(cat $prop)" = "$val" ]; then
+			echo "$prop"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+get_trip_point_temp() {
+	local zone="$(get_sysfs_device /sys/class/thermal type $1)" || return
+	local trip="$(get_sysfs_property $zone "trip_point_*_type" $2)" || return
+	cat ${trip%_type}_temp
+}
+
+temp1_min=0
+temp1_max=$(get_trip_point_temp com-thermal critical)
+temp1_crit=$((temp1_max + 2000))
+temp1_crit_hyst=$((temp1_max - 10000))
+
+temp2_min=0
+temp2_max=$(get_trip_point_temp cpu-thermal critical)
+temp2_crit=$((temp2_max + 2000))
+
+[ -f /etc/default/temp-sensor ] && . /etc/default/temp-sensor
+
+configure_temp_sensor() {
+	local dev="$(get_sysfs_device /sys/class/hwmon name $temp_sensor_name)"
+	local field=""
+	local val=""
+
+	[ -d "$dev" ] || return 1
+
+	for field in $temp_sensor_fields; do
+		eval val=\"\$$field\"
+		[ -n "$val" ] || continue
+		echo "$val" > "$dev/$field"
+	done
+}
+
+case "$1" in
+        start|restart)
+		echo -n "Setting temperature sensor limits "
+		configure_temp_sensor && echo "done." || echo "FAILED."
+		;;
+	stop)
+		;;
+	*)
+		echo "usage: $0 {start|restart}"
+		exit 1
+		;;
+esac
