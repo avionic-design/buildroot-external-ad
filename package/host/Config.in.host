@@ -1,1 +1,2 @@
+source "$BR2_EXTERNAL/package/host/cbootimage/Config.in.host"
 source "$BR2_EXTERNAL/package/host/tegrarcm/Config.in.host"
