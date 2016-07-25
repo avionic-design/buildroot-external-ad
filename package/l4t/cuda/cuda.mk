@@ -49,6 +49,9 @@ endef
 define CUDA_INSTALL_TARGET_CMDS
 	$(call cuda-install-from-to,$(cuda-tempdir-target),$(TARGET_DIR))
 	ln -Tsf cuda-$(CUDA_VERSION) '$(TARGET_DIR)/usr/local/cuda'
+	$(INSTALL) -d '$(TARGET_DIR)/etc/profile.d'
+	$(INSTALL) -m 644 '$(CUDA_PKGDIR)/cuda-ld-library-path.sh' \
+		'$(TARGET_DIR)/etc/profile.d'
 endef
 
 define CUDA_INSTALL_STAGING_CMDS
