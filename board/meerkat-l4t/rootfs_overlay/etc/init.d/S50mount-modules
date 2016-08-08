@@ -34,7 +34,8 @@ case "$1" in
 	start)
 		[ -d "$dir" ] || mkdir -p "$dir" || exit
 		echo "Mounting modules to $dir"
-		mount ${MOUNT_TYPE:+-t $MOUNT_TYPE} ${MOUNT_OPTS:+-o $MOUNT_OPTS} "$lib" "$dir"
+		mount ${MOUNT_TYPE:+-t $MOUNT_TYPE} ${MOUNT_OPTS:+-o $MOUNT_OPTS} "$lib" "$dir" && \
+			udevadm trigger
 		;;
 	stop)
 		[ -d "$dir" ] || exit
