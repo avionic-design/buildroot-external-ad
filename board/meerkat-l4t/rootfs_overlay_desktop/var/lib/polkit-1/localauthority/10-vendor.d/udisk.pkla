@@ -1,0 +1,9 @@
+[udisk admin]
+Identity=unix-group:wheel
+Action=org.freedesktop.udisks.*
+ResultAny=yes
+
+[udisk plugdev]
+Identity=unix-group:plugdev
+Action=org.freedesktop.udisks.drive-detach;org.freedesktop.udisks.drive-eject;org.freedesktop.udisks.filesystem-mount
+ResultAny=yes
