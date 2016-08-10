@@ -1,0 +1,15 @@
+config BR2_PACKAGE_CUDA_DEBAYER
+	bool "cuda-debayer"
+	select BR2_PACKAGE_CUDA
+	select BR2_PACKAGE_LIBGLU
+	select BR2_PACKAGE_LIBGLEW
+	select BR2_PACKAGE_LIBFREEGLUT
+	depends on BR2_PACKAGE_HAS_LIBGL
+	depends on BR2_HOST_CUDA_CROSS_TOOLCHAIN
+
+	help
+	  A debayer image conversion tool using CUDA for accelerated
+	  operation.
+
+comment "cuda-debayer requires libgl and cuda cross-compiling host toolchain"
+	depends on !BR2_PACKAGE_HAS_LIBGL || !BR2_HOST_CUDA_CROSS_TOOLCHAIN
