@@ -1,6 +1,0 @@
-config BR2_PACKAGE_FREEGLUT
-	bool "freeglut"
-	depends on BR2_PACKAGE_HAS_LIBGL
-	select BR2_PACKAGE_LIBGLU
-	help
-	  http://freeglut.sourceforge.net

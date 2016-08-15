@@ -1,2 +1,2 @@
-source "$BR2_EXTERNAL/package/lib/freeglut/Config.in"
+source "$BR2_EXTERNAL/package/lib/libfreeglut/Config.in"
 source "$BR2_EXTERNAL/package/lib/libpng12/Config.in"
