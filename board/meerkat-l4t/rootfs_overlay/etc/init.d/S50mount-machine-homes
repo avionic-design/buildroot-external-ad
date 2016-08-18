@@ -21,6 +21,7 @@ mac=$(cat /sys/class/net/$dev/address 2> /dev/null)
 BASEDIR="$BASEDIR/$mac"
 
 bind_home_dir() {
+	[ -d "$1" ] || return 0
 	# Create and copy the directory if needed
 	if [ ! -e "$BASEDIR$1" ] ; then
 		echo "Creating $BASEDIR$1"
