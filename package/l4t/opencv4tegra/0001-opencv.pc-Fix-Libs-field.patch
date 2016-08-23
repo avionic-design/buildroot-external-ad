@@ -1,0 +1,27 @@
+From 7aace6744d7ca344eab64bf5eaf598e12cf1864f Mon Sep 17 00:00:00 2001
+From: Nikolaus Schulz <nikolaus.schulz@avionic-design.de>
+Date: Thu, 25 Aug 2016 14:18:31 +0200
+Subject: [PATCH] opencv.pc: Fix Libs field
+
+Replace absolute library paths with proper linker options, and pull in
+the CUDA libraries by Requires.private: instead of listing them in Libs:
+directly.
+---
+ for-staging/usr/lib/pkgconfig/opencv.pc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/for-staging/usr/lib/pkgconfig/opencv.pc b/for-staging/usr/lib/pkgconfig/opencv.pc
+index 9e18ea5..be56cca 100644
+--- a/for-staging/usr/lib/pkgconfig/opencv.pc
++++ b/for-staging/usr/lib/pkgconfig/opencv.pc
+@@ -9,5 +9,6 @@ includedir_new=${prefix}/include
+ Name: OpenCV
+ Description: Open Source Computer Vision Library
+ Version: 2.4.10.1
+-Libs:  ${exec_prefix}/lib/libopencv_calib3d.so ${exec_prefix}/lib/libopencv_contrib.so ${exec_prefix}/lib/libopencv_core.so ${exec_prefix}/lib/libopencv_features2d.so ${exec_prefix}/lib/libopencv_flann.so ${exec_prefix}/lib/libopencv_gpu.so ${exec_prefix}/lib/libopencv_highgui.so ${exec_prefix}/lib/libopencv_imgproc.so ${exec_prefix}/lib/libopencv_legacy.so ${exec_prefix}/lib/libopencv_ml.so ${exec_prefix}/lib/libopencv_objdetect.so ${exec_prefix}/lib/libopencv_photo.so ${exec_prefix}/lib/libopencv_stitching.so ${exec_prefix}/lib/libopencv_superres.so ${exec_prefix}/lib/libopencv_ts.a ${exec_prefix}/lib/libopencv_video.so ${exec_prefix}/lib/libopencv_videostab.so ${exec_prefix}/lib/libopencv_esm_panorama.so ${exec_prefix}/lib/libopencv_facedetect.so ${exec_prefix}/lib/libopencv_imuvstab.so ${exec_prefix}/lib/libopencv_tegra.so ${exec_prefix}/lib/libopencv_vstab.so -lcufft -lnpps -lnppi -lnppc -lcudart -lrt -lpthread -lm -ldl
++Requires.private: cudart-6.5 cufft-6.5 nppc-6.5 nppi-6.5 npps-6.5
++Libs:  -L${exec_prefix}/lib -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab -lopencv_esm_panorama -lopencv_facedetect -lopencv_imuvstab -lopencv_tegra -lopencv_vstab -lrt -lpthread -lm -ldl
+ Cflags: -I${includedir_old} -I${includedir_new}
+-- 
+2.1.4
+
