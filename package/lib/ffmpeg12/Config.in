@@ -53,6 +53,9 @@ config BR2_PACKAGE_FFMPEG12_FFSERVER
 	help
 	  FFserver is a streaming server for both audio and video.
 
+comment "ffmeg12 application ffserver conflicts with ffmpeg application ffserver"
+	depends on BR2_PACKAGE_FFMPEG_FFSERVER
+
 config BR2_PACKAGE_FFMPEG12_POSTPROC
 	bool "Build libpostproc"
 	depends on BR2_PACKAGE_FFMPEG12_GPL
