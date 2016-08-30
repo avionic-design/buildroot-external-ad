@@ -6,4 +6,5 @@ source "$BR2_EXTERNAL/package/l4t/cuda-cross-toolchain/Config.in.host"
 source "$BR2_EXTERNAL/package/l4t/cuda-samples/Config.in"
 source "$BR2_EXTERNAL/package/l4t/nvidia-islandgl/Config.in"
 source "$BR2_EXTERNAL/package/l4t/opencv4tegra/Config.in"
+source "$BR2_EXTERNAL/package/l4t/nvidia-tegrastats/Config.in"
 endmenu
