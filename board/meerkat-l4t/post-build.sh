@@ -24,3 +24,9 @@ then
 PermitRootLogin yes
 ' etc/ssh/sshd_config
 fi
+
+if ! awk '$1 !~ /^#/ && $2 == "/sys/kernel/debug"' etc/fstab | grep -q .
+then
+	printf "debugfs\t\t/sys/kernel/debug\tdebugfs\tdefaults\t0\t0\n" \
+		>> etc/fstab
+fi
