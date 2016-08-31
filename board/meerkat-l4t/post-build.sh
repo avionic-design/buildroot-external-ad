@@ -2,7 +2,35 @@
 
 set -e
 
+BUILDROOT_DIR=$PWD
 cd "$TARGET_DIR"
+
+#
+# Record AD versions in os-release with an AD_ vendor prefix.
+#
+
+# The top-level buildroot Makefile creates /etc/os-release (overwriting
+# it), then copies the rootfs overlays, then runs post-build scripts.
+# Since we want to preserve the os-release info from buildroot, we can't
+# put an os-release file in an overlay, and all fumbling with os-release
+# is happening here.
+
+# Clear existing entries first
+sed -i /^AD_/d etc/os-release
+
+# Kernel release version is temporarily stored in
+# $BUILD_DIR/os-release.ad by the kernel package hooks
+cat "$BUILD_DIR"/os-release.ad >> etc/os-release
+
+# $BR2_VERSION_FULL carries commit info for untagged buildroot trees,
+# includes -dirty info, and it's already saved to os-release as VERSION
+# by buildroot, so we can skip that.
+
+if [ -d "$BR2_EXTERNAL"/.git ]; then
+	printf '%s="%s"\n' >> etc/os-release \
+		AD_BR2_EXTERNAL_VERSION \
+		"$(cd "$BR2_EXTERNAL" && git describe --dirty --long)"
+fi
 
 #
 # Scrub files from the target that can be identified as having leaked

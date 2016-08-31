@@ -8,3 +8,5 @@ endif
 # Ubuntu builds tiff with versioned symbols, thus Nvidia-provided
 # binaries that link to libtiff want versioned symbols.
 TIFF_CONF_OPTS += --enable-ld-version-script
+
+include $(BR2_EXTERNAL)/install-versions.mk
