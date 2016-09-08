@@ -83,8 +83,12 @@ if [ ! -z "${DFU_MAP}" ]; then
 	echo "Use DFU_MAP \"${DFU_MAP}\""
 	DFU_BOOTCMD=$(cat <<-EOF
 		echo >>> Enter DFU mode
-		setenv dfu_alt_info '${DFU_MAP}'
 		dfu 0 mmc 0
+		EOF
+	)
+	PRE_SAVEENV_BOOTCMD=$(cat <<-EOF
+		setenv dfu_alt_info '${DFU_MAP}'
+		setenv dfucmd_mmc0 'dfu 0 mmc 0'
 		EOF
 	)
 fi
@@ -115,6 +119,7 @@ UBOOT_FLASH_ENV=$(cat <<-EOF
 	mmc write ${IMG_ADDR} 0 ${IMG_SIZE}
 	echo >>> Configure environment
 	env default -f -a
+	${PRE_SAVEENV_BOOTCMD}
 	saveenv
 	${GPT_BOOTCMD}
 	${EXTRA_BOOTCMD}
