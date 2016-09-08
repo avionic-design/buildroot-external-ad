@@ -18,6 +18,7 @@ usage() {
 	echo "	-p pkc-file		key file to use for signed communication (default=none)"
 	echo "	-r rootfs		rootfs image to write.  (default=<output-dir>/images/rootfs.ext4"
 	echo "	-u usb device path	USB device path to use for flashing."
+	echo "	-F			Skip u-boot update (use to update the rootfs via dfu only)"
 }
 
 wait_usb_path() {
@@ -106,7 +107,7 @@ BCT=""
 FLASHER=""
 USB_PATH=""
 PKC_FILE=""
-while getopts ":f:b:m:o:p:u:h" opt; do
+while getopts ":f:b:m:o:p:u:Fh" opt; do
 	case $opt in
 		b)
 			BCT=$OPTARG
@@ -126,6 +127,9 @@ while getopts ":f:b:m:o:p:u:h" opt; do
 		u)
 			USB_PATH=$OPTARG
 			;;
+		F)
+			SKIP_UBOOT=yes
+			;;
 		h)
 			usage
 			exit 0
@@ -142,7 +146,7 @@ while getopts ":f:b:m:o:p:u:h" opt; do
 done
 shift "$((OPTIND-1))"
 
-if [ -d "${OUTPUT}" ]; then
+if [ "x${SKIP_UBOOT}" != xyes -a -d "${OUTPUT}" ]; then
 	export PATH=$OUTPUT/host/usr/bin:$PATH
 
 	if [ "x${BCT}" = "x" ]; then
@@ -161,10 +165,13 @@ if [ -d "${OUTPUT}" ]; then
 	fi
 fi
 
-[ -f "${BCT}" ] || die "bct has to be specified"
-[ -f "${FLASHER}" ] || die "flasher has to be specified"
+if [ "x${SKIP_UBOOT}" != xyes ]; then
+	[ -f "${BCT}" ] || die "bct has to be specified"
+	[ -f "${FLASHER}" ] || die "flasher has to be specified"
 
-load_flasher
+	load_flasher
+fi
+
 if [ $# -eq 0 ]; then
 	echo "Flashing default rootfs"
 	PARTITION=rootfs
