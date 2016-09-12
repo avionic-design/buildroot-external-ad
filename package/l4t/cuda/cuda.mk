@@ -1,25 +1,32 @@
+# URLs extracted from JetPack v2.2.1
+CUDA_L4T_VERSION = 21.5
+CUDA_VERSION_PATCHLVL = 53
 CUDA_VERSION = 6.5
-CUDA_SITE = http://developer.download.nvidia.com/embedded/L4T/r21_Release_v3.0
-CUDA_SOURCE = cuda-repo-l4t-r21.3-6-5-prod_6.5-42_armhf.deb
-CUDA_EXTRA_DOWNLOADS = $(addprefix http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/,$(cuda-toolchain-deb))
+CUDA_SITE = http://developer.download.nvidia.com/devzone/devcenter/mobile/jetpack_l4t/005/linux-x64
+CUDA_SOURCE = cuda-repo-l4t-r$(CUDA_L4T_VERSION)-$(cuda-dash-version)-local_$(CUDA_VERSION)-$(CUDA_VERSION_PATCHLVL)_armhf.deb
 CUDA_LICENSE = EULA
-CUDA_LICENSE_FILES = $(notdir $(cuda-tempdir-repo-root))/usr/share/doc/cuda-repo-l4t-r21.3-6-5-prod/copyright
+CUDA_LICENSE_FILES = $(notdir $(cuda-tempdir-staging))/usr/local/cuda-$(CUDA_VERSION)/doc/EULA.txt
 CUDA_REDISTRIBUTE = NO
 
 CUDA_INSTALL_TARGET = YES
 CUDA_INSTALL_STAGING = YES
 
 cuda-package-basenames := cuda-cublas cuda-cudart cuda-cufft cuda-curand \
-	cuda-cusparse cuda-npp
-
-cuda-toolchain-deb := cuda-misc-headers-cross-armhf-6-5_6.5-19_armhf.deb
+	cuda-cusparse cuda-npp cuda-cusolver
+cuda-target-package-basenames = cuda-command-line-tools
+cuda-staging-package-basenames = \
+	cuda-misc-headers cuda-driver-dev cuda-license
 
 cuda-dash-version := $(subst .,-,$(CUDA_VERSION))
-cuda-target-package-names := $(addsuffix -$(cuda-dash-version),$(cuda-package-basenames))
-cuda-staging-package-names := $(addsuffix -dev-$(cuda-dash-version),$(cuda-package-basenames))
+cuda-target-package-names := $(addsuffix -$(cuda-dash-version), \
+	$(cuda-package-basenames) \
+	$(cuda-target-package-basenames))
+cuda-staging-package-names := $(addsuffix -dev-$(cuda-dash-version), \
+	$(cuda-package-basenames)) \
+	cuda-cudart
 
 cuda-tempdir-repo-root = $(CUDA_DIR)/repo
-cuda-tempdir-repo      = $(cuda-tempdir-repo-root)/var/cuda-repo-$(cuda-dash-version)-prod
+cuda-tempdir-repo      = $(cuda-tempdir-repo-root)/var/cuda-repo-$(cuda-dash-version)-local
 
 cuda-tempdir-target  = $(CUDA_DIR)/for-target
 cuda-tempdir-staging = $(CUDA_DIR)/for-staging
@@ -41,7 +48,6 @@ define CUDA_EXTRACT_CMDS
 	$(call cuda-unpack-debfile-to,$(DL_DIR)/$(CUDA_SOURCE),$(cuda-tempdir-repo-root))
 	$(call cuda-unpack-debian-packages-by-name-to,$(cuda-target-package-names),$(cuda-tempdir-target))
 	$(call cuda-unpack-debian-packages-by-name-to,$(cuda-staging-package-names),$(cuda-tempdir-staging))
-	$(call cuda-unpack-debfile-to,$(DL_DIR)/$(cuda-toolchain-deb),$(cuda-tempdir-staging))
 endef
 
 define cuda-install-from-to
@@ -59,10 +65,8 @@ define CUDA_INSTALL_TARGET_CMDS
 endef
 
 define CUDA_INSTALL_STAGING_CMDS
-	$(call cuda-install-from-to,$(cuda-tempdir-target),$(STAGING_DIR))
 	$(call cuda-install-from-to,$(cuda-tempdir-staging),$(STAGING_DIR))
 	ln -Tsf cuda-$(CUDA_VERSION) '$(STAGING_DIR)/usr/local/cuda'
-	ln -Tsf targets/armv7-linux-gnueabihf/include '$(STAGING_DIR)/usr/local/cuda/include'
 endef
 
 $(eval $(generic-package))
