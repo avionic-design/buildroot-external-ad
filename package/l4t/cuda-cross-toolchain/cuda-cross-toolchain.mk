@@ -1,33 +1,32 @@
+# URLs extracted from JetPack v2.2.1
 HOST_CUDA_CROSS_TOOLCHAIN_VERSION = 6.5
-HOST_CUDA_CROSS_TOOLCHAIN_SITE = http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/
-HOST_CUDA_CROSS_TOOLCHAIN_SOURCE = cuda-core-6-5_6.5-19_amd64.deb
-HOST_CUDA_CROSS_TOOLCHAIN_EXTRA_DOWNLOADS = $(cuda-cross-toolchain-license-deb)
+HOST_CUDA_CROSS_TOOLCHAIN_VERSION_PATCHLVL = 53
+HOST_CUDA_CROSS_TOOLCHAIN_SITE = http://developer.download.nvidia.com/devzone/devcenter/mobile/jetpack_l4t/005/linux-x64
+HOST_CUDA_CROSS_TOOLCHAIN_SOURCE = cuda-repo-ubuntu1404-6-5-local_6.5-53_amd64.deb
 HOST_CUDA_CROSS_TOOLCHAIN_LICENSE = EULA
-HOST_CUDA_CROSS_TOOLCHAIN_LICENSE_FILES = $(HOST_DIR)/usr/local/cuda-6.5/doc/EULA.txt
+HOST_CUDA_CROSS_TOOLCHAIN_LICENSE_FILES = usr/local/cuda-6.5/doc/EULA.txt
 HOST_CUDA_CROSS_TOOLCHAIN_REDISTRIBUTE = NO
 
 HOST_CUDA_CROSS_TOOLCHAIN_DEPENDENCIES = cuda
 
-cuda-cross-toolchain-license-deb := cuda-license-6-5_6.5-19_amd64.deb
+cuda-cross-toolchain-debfiles = \
+	$(addsuffix -$(cuda-cross-toolchain-dash-version)_$(HOST_CUDA_CROSS_TOOLCHAIN_VERSION)-$(HOST_CUDA_CROSS_TOOLCHAIN_VERSION_PATCHLVL)_amd64.deb,$(1))
 
-define cuda-cross-toolchain-unpack-debfile-to
-	ar p $(1) data.tar.gz | $(TAR) -C '$(2)' -z $(TAR_OPTIONS) -
-endef
+HOST_CUDA_CROSS_TOOLCHAIN_INNER_SRC = $(call cuda-cross-toolchain-debfiles, \
+	cuda-license \
+)
+HOST_CUDA_CROSS_TOOLCHAIN_INNER_SRC_FOR_HOST = $(call cuda-cross-toolchain-debfiles, \
+	cuda-core \
+)
+cuda-cross-toolchain-dash-version = \
+	$(subst .,-,$(HOST_CUDA_CROSS_TOOLCHAIN_VERSION))
 
-define HOST_CUDA_CROSS_TOOLCHAIN_EXTRACT_CMDS
-	$(call cuda-cross-toolchain-unpack-debfile-to,$(DL_DIR)/$(HOST_CUDA_CROSS_TOOLCHAIN_SOURCE),$(HOST_CUDA_CROSS_TOOLCHAIN_DIR))
-	$(call cuda-cross-toolchain-unpack-debfile-to,$(DL_DIR)/$(cuda-cross-toolchain-license-deb),$(HOST_CUDA_CROSS_TOOLCHAIN_DIR))
-endef
-
-define cuda-cross-toolchain-install-from-to
-	cd '$(1)' && find . \
-		-path ./usr/share/lintian -prune -o -print0 | \
-		cpio -p0dum '$(2)'
-endef
+HOST_CUDA_CROSS_TOOLCHAIN_INNER_SRC_PREFIX = \
+	./var/cuda-repo-$(cuda-cross-toolchain-dash-version)-local/
 
 define HOST_CUDA_CROSS_TOOLCHAIN_INSTALL_CMDS
-	$(call cuda-cross-toolchain-install-from-to,$(HOST_CUDA_CROSS_TOOLCHAIN_DIR),$(HOST_DIR))
+	$(HOST_CUDA_CROSS_TOOLCHAIN_INSTALL_FOR_HOST_CMDS)
 	ln -Tsf cuda-$(HOST_CUDA_CROSS_TOOLCHAIN_VERSION) '$(HOST_DIR)/usr/local/cuda'
 endef
 
-$(eval $(host-generic-package))
+$(eval $(host-prebuilt-nested-package))
