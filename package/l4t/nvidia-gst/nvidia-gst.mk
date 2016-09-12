@@ -5,7 +5,7 @@
 ################################################################################
 
 NVIDIA_GST_VERSION_MAJOR = 21
-NVIDIA_GST_VERSION_MINOR = 4.0
+NVIDIA_GST_VERSION_MINOR = 5.0
 NVIDIA_GST_VERSION = $(NVIDIA_GST_VERSION_MAJOR).$(NVIDIA_GST_VERSION_MINOR)
 NVIDIA_GST_SOURCE = Tegra124_Linux_R$(NVIDIA_GST_VERSION)_armhf.tbz2
 NVIDIA_GST_SITE = http://developer.download.nvidia.com/embedded/L4T/r$(NVIDIA_GST_VERSION_MAJOR)_Release_v$(NVIDIA_GST_VERSION_MINOR)
@@ -48,8 +48,8 @@ define NVIDIA_GST_INSTALL_TARGET_CMDS
 
 	$(INSTALL) -d $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 0755 $(@D)/usr/bin/nvgst{capture,player}-{0.10,1.0} $(TARGET_DIR)/usr/bin; \
-	ln -sf nvgstcapture-0.10 $(TARGET_DIR)/usr/bin/nvgstcapture
-	ln -sf nvgstplayer-0.10 $(TARGET_DIR)/usr/bin/nvgstplayer
+	ln -sf nvgstcapture-1.0 $(TARGET_DIR)/usr/bin/nvgstcapture
+	ln -sf nvgstplayer-1.0 $(TARGET_DIR)/usr/bin/nvgstplayer
 endef
 
 $(eval $(generic-package))
