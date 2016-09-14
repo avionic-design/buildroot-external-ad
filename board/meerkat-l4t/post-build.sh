@@ -68,3 +68,16 @@ then
 	printf "debugfs\t\t/sys/kernel/debug\tdebugfs\tdefaults\t0\t0\n" \
 		>> etc/fstab
 fi
+
+#
+# Run gettys on all vt. This includes HDMI displays.
+#
+grep -q "^tty1:.*/sbin/getty" etc/inittab || cat <<-'EOF' >> etc/inittab
+
+	tty1::respawn:/sbin/getty -L tty1 0 linux
+	tty2::respawn:/sbin/getty -L tty2 0 linux
+	tty3::respawn:/sbin/getty -L tty3 0 linux
+	tty4::respawn:/sbin/getty -L tty4 0 linux
+	tty5::respawn:/sbin/getty -L tty5 0 linux
+	tty6::respawn:/sbin/getty -L tty6 0 linux
+EOF
