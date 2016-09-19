@@ -1,3 +1,5 @@
+include $(BR2_EXTERNAL)/prebuilt-nested-package.mk
+
 # Helper for unpacking debian packages
 INFLATE.deb = $(BR2_EXTERNAL)/inflate-debpkg.sh
 
