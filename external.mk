@@ -1,3 +1,6 @@
+# Helper for unpacking debian packages
+INFLATE.deb = $(BR2_EXTERNAL)/inflate-debpkg.sh
+
 include $(sort $(wildcard $(BR2_EXTERNAL)/package/*/*/*.mk))
 
 # Make sure enlightenment is built with udisks support
