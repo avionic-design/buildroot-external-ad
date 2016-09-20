@@ -10,22 +10,13 @@ NVIDIA_GST_VERSION = $(NVIDIA_GST_VERSION_MAJOR).$(NVIDIA_GST_VERSION_MINOR)
 NVIDIA_GST_SOURCE = Tegra124_Linux_R$(NVIDIA_GST_VERSION)_armhf.tbz2
 NVIDIA_GST_SITE = http://developer.download.nvidia.com/embedded/L4T/r$(NVIDIA_GST_VERSION_MAJOR)_Release_v$(NVIDIA_GST_VERSION_MINOR)
 NVIDIA_GST_LICENSE = custom
-NVIDIA_GST_LICENSE_FILES = LICENSE
+NVIDIA_GST_LICENSE_FILES = Linux_for_Tegra/nv_tegra/LICENSE
 NVIDIA_GST_INSTALL_STAGING = YES
 NVIDIA_GST_INSTALL_TARGET = YES
-NVIDIA_GST_STRIP_COMPONENTS = 2
+NVIDIA_GST_STRIP_COMPONENTS = 0
 
-nvidia-gst-stage2-tarball := nv_sample_apps/nvgstapps.tbz2
-nvidia-gst-stage1-unpack-these := $(addprefix Linux_for_Tegra/nv_tegra/, \
-	$(NVIDIA_GST_LICENSE_FILES) $(nvidia-gst-stage2-tarball))
-
-define NVIDIA_GST_EXTRACT_CMDS
-	$(call suitable-extractor,$(NVIDIA_GST_SOURCE)) $(DL_DIR)/$(NVIDIA_GST_SOURCE) | \
-	$(TAR) -C $(NVIDIA_GST_DIR) --strip-components=$(NVIDIA_GST_STRIP_COMPONENTS) $(TAR_OPTIONS) - $(nvidia-gst-stage1-unpack-these)
-	$(call suitable-extractor,$(nvidia-gst-stage2-tarball)) $(NVIDIA_GST_DIR)/$(nvidia-gst-stage2-tarball) | \
-	$(TAR) -C $(NVIDIA_GST_DIR) $(TAR_OPTIONS) -
-	$(RM) -r $(NVIDIA_GST_DIR)/$(dir $(nvidia-gst-stage2-tarball))
-endef
+NVIDIA_GST_INNER_SRC         = Linux_for_Tegra/nv_tegra/nv_sample_apps/nvgstapps.tbz2
+NVIDIA_GST_OUTER_SRC_EXTRACT_EXTRA = $(NVIDIA_GST_LICENSE_FILES)
 
 define NVIDIA_GST_INSTALL_STAGING_CMDS
 	$(INSTALL) -d $(STAGING_DIR)/usr/lib/gstreamer-0.10/
@@ -52,4 +43,4 @@ define NVIDIA_GST_INSTALL_TARGET_CMDS
 	ln -sf nvgstplayer-1.0 $(TARGET_DIR)/usr/bin/nvgstplayer
 endef
 
-$(eval $(generic-package))
+$(eval $(prebuilt-nested-package))

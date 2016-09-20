@@ -10,23 +10,14 @@ NVIDIA_DRIVERS_VERSION = $(NVIDIA_DRIVERS_VERSION_MAJOR).$(NVIDIA_DRIVERS_VERSIO
 NVIDIA_DRIVERS_SOURCE = Tegra124_Linux_R$(NVIDIA_DRIVERS_VERSION)_armhf.tbz2
 NVIDIA_DRIVERS_SITE = http://developer.download.nvidia.com/embedded/L4T/r$(NVIDIA_DRIVERS_VERSION_MAJOR)_Release_v$(NVIDIA_DRIVERS_VERSION_MINOR)
 NVIDIA_DRIVERS_LICENSE = custom
-NVIDIA_DRIVERS_LICENSE_FILES = LICENSE
+NVIDIA_DRIVERS_LICENSE_FILES = Linux_for_Tegra/nv_tegra/LICENSE
 NVIDIA_DRIVERS_REDISTRIBUTE = NO
 NVIDIA_DRIVERS_INSTALL_STAGING = YES
 NVIDIA_DRIVERS_INSTALL_TARGET = YES
-NVIDIA_DRIVERS_STRIP_COMPONENTS = 2
+NVIDIA_DRIVERS_STRIP_COMPONENTS = 0
 
-nvidia-drivers-stage2-tarball := nvidia_drivers.tbz2
-nvidia-drivers-stage1-unpack-these := $(addprefix Linux_for_Tegra/nv_tegra/, \
-	$(NVIDIA_DRIVERS_LICENSE_FILES) $(nvidia-drivers-stage2-tarball))
-
-define NVIDIA_DRIVERS_EXTRACT_CMDS
-	$(call suitable-extractor,$(NVIDIA_DRIVERS_SOURCE)) $(DL_DIR)/$(NVIDIA_DRIVERS_SOURCE) | \
-	$(TAR) -C $(NVIDIA_DRIVERS_DIR) --strip-components=$(NVIDIA_DRIVERS_STRIP_COMPONENTS) $(TAR_OPTIONS) - $(nvidia-drivers-stage1-unpack-these)
-	$(call suitable-extractor,$(nvidia-drivers-stage2-tarball)) $(NVIDIA_DRIVERS_DIR)/$(nvidia-drivers-stage2-tarball) | \
-	$(TAR) -C $(NVIDIA_DRIVERS_DIR) $(TAR_OPTIONS) -
-	$(RM) $(NVIDIA_DRIVERS_DIR)/$(nvidia-drivers-stage2-tarball)
-endef
+NVIDIA_DRIVERS_INNER_SRC         = Linux_for_Tegra/nv_tegra/nvidia_drivers.tbz2
+NVIDIA_DRIVERS_OUTER_SRC_EXTRACT_EXTRA = $(NVIDIA_DRIVERS_LICENSE_FILES)
 
 define NVIDIA_DRIVERS_INSTALL_STAGING_CMDS
 	$(INSTALL) -d $(STAGING_DIR)/usr/lib/tegra/
@@ -61,4 +52,4 @@ define NVIDIA_DRIVERS_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0644 $(@D)/etc/nv_tegra_release $(TARGET_DIR)/etc/nv_tegra_release
 endef
 
-$(eval $(generic-package))
+$(eval $(prebuilt-nested-package))
