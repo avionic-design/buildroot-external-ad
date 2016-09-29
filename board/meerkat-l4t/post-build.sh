@@ -49,6 +49,13 @@ if test -d "./$BASE_DIR"; then
 	rmdir -p --ignore-fail-on-non-empty "$(readlink -f ./"$BASE_DIR")"
 fi
 
+# Strip lintian dirs. These come from .deb packages that are installed
+# to the target as-is. We just clean these here rather than requiring
+# each and every such package to strip them.
+if test -d ./usr/share/lintian; then
+	rm -r ./usr/share/lintian
+fi
+
 #
 # Enable ssh login with password
 #
