@@ -14,4 +14,9 @@ endif
 # binaries that link to libtiff want versioned symbols.
 TIFF_CONF_OPTS += --enable-ld-version-script
 
+# Override tegrarcm version
+ifeq ($(BR2_PACKAGE_TEGRARCM),y)
+	TEGRARCM_VERSION = ec1eeac
+endif
+
 include $(BR2_EXTERNAL)/install-versions.mk
