@@ -2,7 +2,7 @@ config BR2_PACKAGE_OPENCV4TEGRA
 	bool "opencv4tegra"
 	select BR2_PACKAGE_CUDA
 	select BR2_PACKAGE_LIBPNG12
-	select BR2_Package_LIBJPEG
+	select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_TIFF
 	select BR2_PACKAGE_JASPER
 	select BR2_PACKAGE_FFMPEG12

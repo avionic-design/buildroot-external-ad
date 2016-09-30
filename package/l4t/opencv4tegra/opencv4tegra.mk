@@ -5,7 +5,7 @@ OPENCV4TEGRA_SOURCE = libopencv4tegra-repo_$(OPENCV4TEGRA_VERSION)_armhf_l4t-r21
 OPENCV4TEGRA_LICENSE = EULA
 OPENCV4TEGRA_LICENSE_FILES = ./usr/share/doc/libopencv4tegra-repo/copyright
 OPENCV4TEGRA_REDISTRIBUTE = NO
-OPENCV4TEGRA_DEPENDENCIES = cuda libpng12 jpeg libjpeg tiff jasper ffmpeg12 \
+OPENCV4TEGRA_DEPENDENCIES = cuda libpng12 jpeg tiff jasper ffmpeg12 \
 			    libgtk2 zlib libtbb
 
 OPENCV4TEGRA_INSTALL_TARGET = YES
