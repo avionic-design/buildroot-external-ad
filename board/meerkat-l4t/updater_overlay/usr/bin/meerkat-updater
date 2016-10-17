@@ -69,15 +69,15 @@ parted_commands() {
 
 # Function to create filesystems
 mkfs_ext2() {
-	mkfs.ext2 -q -L "$2" "$1"
+	mkfs.ext2 -q -F -L "$2" "$1"
 }
 
 mkfs_ext3() {
-	mkfs.ext3 -q -L "$2" "$1"
+	mkfs.ext3 -q -F -L "$2" "$1"
 }
 
 mkfs_ext4() {
-	mkfs.ext4 -q -L "$2" "$1"
+	mkfs.ext4 -q -F -L "$2" "$1"
 }
 
 mkfs_swap() {
