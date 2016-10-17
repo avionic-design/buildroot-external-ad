@@ -221,7 +221,7 @@ mount_updater() {
 		sleep 1
 	done
 	echo 50 >&2
-	mount -o ro /dev/disk/by-label/$label /mnt/updater
+	mkdir -p /mnt/updater && mount -o ro /dev/disk/by-label/$label /mnt/updater
 	echo 100 >&2
 }
 
