@@ -25,7 +25,7 @@ if [ ! -b "$DEV" -o ! -d "$IMAGES" ] ; then
 fi
 
 echo "Writing partition table to $DEV"
-parted -a optimal -s "$DEV" mklabel gpt mkpart updater ext4 0% 100% || \
+parted -a optimal -s "$DEV" mklabel gpt mkpart ext4 0% 100% name 1 updater || \
 	die "Failed to write partition table to $DEV"
 udevadm settle -t 5 || \
 	die "Timeout waiting for partition block device"
