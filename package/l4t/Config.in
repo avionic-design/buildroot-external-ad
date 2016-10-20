@@ -12,6 +12,7 @@ source "$BR2_EXTERNAL/package/l4t/opencv4tegra/Config.in"
 source "$BR2_EXTERNAL/package/l4t/nvidia-tegrastats/Config.in"
 source "$BR2_EXTERNAL/package/l4t/visionworks/Config.in"
 source "$BR2_EXTERNAL/package/l4t/libnvxio/Config.in"
+source "$BR2_EXTERNAL/package/l4t/visionworks-samples/Config.in"
 endmenu
 endif
 
