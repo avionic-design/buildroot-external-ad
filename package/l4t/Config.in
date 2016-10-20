@@ -14,6 +14,7 @@ source "$BR2_EXTERNAL/package/l4t/visionworks/Config.in"
 source "$BR2_EXTERNAL/package/l4t/libnvxio/Config.in"
 source "$BR2_EXTERNAL/package/l4t/visionworks-samples/Config.in"
 source "$BR2_EXTERNAL/package/l4t/visionworks-sfm/Config.in"
+source "$BR2_EXTERNAL/package/l4t/visionworks-sfm-samples/Config.in"
 endmenu
 endif
 
