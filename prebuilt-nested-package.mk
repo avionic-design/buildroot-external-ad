@@ -107,24 +107,27 @@ $(2)_OUTER_SRC_EXTRACT ?= $$(addprefix $$($(2)_INNER_SRC_PREFIX), \
 	$$($(2)_INNER_SRC_FOR_STAGING) $$($(2)_INNER_SRC_FOR_HOST))
 
 define $(2)_EXTRACT_OUTER_TO_CMDS
-	mkdir -p $$(2)
-	$$(call suitable-extractor,$$($(2)_SOURCE)) $$(DL_DIR)/$$($(2)_SOURCE) | \
-		$(TAR) -C $$(2) $$(TAR_OPTIONS) - $$(sort $$(1))
+	$$(if $$(1),
+		mkdir -p $$(2)
+		$$(call suitable-extractor,$$($(2)_SOURCE)) $$(DL_DIR)/$$($(2)_SOURCE) | \
+			$(TAR) -C $$(2) $$(TAR_OPTIONS) - $$(sort $$(1))
+	)
 endef
 
 define $(2)_EXTRACT_OUTER_CMDS
 	$$(call $(2)_EXTRACT_OUTER_TO_CMDS,$$($(2)_OUTER_SRC_EXTRACT),$$($(2)_OUTER_SRC_DIR))
-	$$(if $$($(2)_OUTER_SRC_EXTRACT_EXTRA), \
-		$$(call $(2)_EXTRACT_OUTER_TO_CMDS,$$($(2)_OUTER_SRC_EXTRACT_EXTRA),$$($(2)_DIR)))
+	$$(call $(2)_EXTRACT_OUTER_TO_CMDS,$$($(2)_OUTER_SRC_EXTRACT_EXTRA),$$($(2)_DIR))
 endef
 
 define $(2)_EXTRACT_INNER_TO_CMDS
-	mkdir -p $$(2)
-	$$(foreach p,$$(1),$$(call suitable-extractor,$$(p)) $$($(2)_OUTER_SRC_DIR)/$$($(2)_INNER_SRC_PREFIX)/$$(p) | \
-		$$(TAR) --strip-components=$$($(2)_STRIP_COMPONENTS) \
-			-C $$(2) \
-			$$(foreach x,$$($(2)_EXCLUDES),--exclude='$$(x)' ) \
-			$$(TAR_OPTIONS) - $$(sep))
+	$$(if $$(1),
+		mkdir -p $$(2)
+		$$(foreach p,$$(1),$$(call suitable-extractor,$$(p)) $$($(2)_OUTER_SRC_DIR)/$$($(2)_INNER_SRC_PREFIX)/$$(p) | \
+			$$(TAR) --strip-components=$$($(2)_STRIP_COMPONENTS) \
+				-C $$(2) \
+				$$(foreach x,$$($(2)_EXCLUDES),--exclude='$$(x)' ) \
+				$$(TAR_OPTIONS) - $$(sep))
+	)
 endef
 
 define $(2)_EXTRACT_INNER_CMDS
@@ -146,15 +149,21 @@ define $(1)-copy-tree-to
 endef
 
 ifeq ($(4),target)
+ifneq ($$($(2)_INNER_SRC_FOR_TARGET),)
 $(2)_INSTALL_FOR_TARGET_CMDS = \
 	$$(call $(1)-copy-tree-to,$$($(2)_FOR_TARGET_DIR),$$(TARGET_DIR))
+endif
+ifneq ($$($(2)_INNER_SRC_FOR_STAGING),)
 $(2)_INSTALL_FOR_STAGING_CMDS = \
 	$$(call $(1)-copy-tree-to,$$($(2)_FOR_STAGING_DIR),$$(STAGING_DIR))
+endif
 $(2)_INSTALL_TARGET_CMDS  ?= $$($(2)_INSTALL_FOR_TARGET_CMDS)
 $(2)_INSTALL_STAGING_CMDS ?= $$($(2)_INSTALL_FOR_STAGING_CMDS)
 else
+ifneq ($$($(2)_INNER_SRC_FOR_HOST),)
 $(2)_INSTALL_FOR_HOST_CMDS = \
 	$$(call $(1)-copy-tree-to,$$($(2)_FOR_HOST_DIR),$$(HOST_DIR))
+endif
 $(2)_INSTALL_CMDS         ?= $$($(2)_INSTALL_FOR_HOST_CMDS)
 endif
 
