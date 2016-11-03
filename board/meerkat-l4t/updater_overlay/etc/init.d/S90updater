@@ -11,7 +11,7 @@ if dmesg | grep "$HDMI_STATE_REGEXP" | tail -n 1 | grep -q '(Enabled)' ; then
 	export TERM=linux
 	RUN_UPDATER="openvt -c 1 $UPDATER"
 else
-	RUN_UPDATER="getty -L -i -n -l $UPDATER ttyS0 0 vt100"
+	RUN_UPDATER="getty -L -i -n -l $UPDATER ttyS0 0 ${TERM:-vt100}"
 fi
 
 case "$1" in
