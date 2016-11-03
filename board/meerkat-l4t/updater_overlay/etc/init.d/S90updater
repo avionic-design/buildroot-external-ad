@@ -16,6 +16,8 @@ fi
 
 case "$1" in
 	start)
+		# Only display kernel errors
+		dmesg -n 3
 		echo "Starting Meerkat Updater"
 		$RUN_UPDATER
 		;;
