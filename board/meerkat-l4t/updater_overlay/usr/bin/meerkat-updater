@@ -7,14 +7,15 @@ set -o pipefail
 trap '' INT QUIT TERM
 
 # Default config
-DISK=/dev/disk/by-path/platform-sdhci-tegra.3
+: ${DISK:=/dev/disk/by-path/platform-sdhci-tegra.3}
 
 # List of the partitions to create
-PARTITIONS="rootfs"
+: ${PARTITIONS:=rootfs}
 # For each partition: fs-type start end
-PARTITION_rootfs="ext4 0% 100%"
+: ${PARTITION_rootfs:=ext4 0% 100%}
 
-DIALOG_SIZE="6 80"
+# Default size for the dialogs
+: ${DIALOG_SIZE:=6 80}
 
 # Abort the script if a step fails
 die() {
