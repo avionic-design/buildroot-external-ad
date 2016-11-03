@@ -8,6 +8,8 @@ trap '' INT QUIT TERM
 
 # Default config
 : ${DISK:=/dev/disk/by-path/platform-sdhci-tegra.3}
+# Source partition label, /dev/path or nfs:/root
+: ${SOURCE:=LABEL=updater}
 
 # List of the partitions to create
 : ${PARTITIONS:=rootfs}
@@ -212,17 +214,46 @@ fill_partition() {
 	fi
 }
 
-mount_updater() {
-	local label=
-	echo 0 >&2
+find_disk_by() {
+	local name
 	while true; do
-		for label in updater Updater UPDATER ; do
-			[ -L /dev/disk/by-label/$label ] && break 2
-		done
+		name="$(ls -1 /dev/disk/by-$1 2> /dev/null | grep -ixF "$2")"
+		if [ -n "$name" -a -b "/dev/disk/by-$1/$name" ] ; then
+			realpath "/dev/disk/by-$1/$name"
+			return
+		fi
 		sleep 1
 	done
+}
+
+wait_for_disk_dev() {
+	while true; do
+		[ -b "$1" ] && return
+		sleep 1
+	done
+}
+
+mount_updater() {
+	local proto opts=ro dev
+	echo 0 >&2
+	proto="$(echo "$SOURCE" | cut -s -d = -f 1 | tr A-Z a-z)"
+	[ -n "$proto" ] && dev="$(echo "$SOURCE" | cut -d = -f 2-)" || dev="$SOURCE"
+	case "$proto" in
+		nfs)
+			opts="$opts,nolock,addr=$(echo "$dev" | cut -d : -f 1)"
+			;;
+		id|label|partlabel|partuuid|path|uuid)
+			dev="$(find_disk_by "$proto" "$dev")"
+			;;
+		device|'')
+			wait_for_disk_dev "$dev"
+			;;
+		*)
+			return 1
+	esac
 	echo 50 >&2
-	mkdir -p /mnt/updater && mount -o ro /dev/disk/by-label/$label /mnt/updater
+	mkdir -p /mnt/updater || return
+	mount -o "$opts" "$dev" /mnt/updater || return
 	echo 100 >&2
 }
 
@@ -230,7 +261,8 @@ mount_updater() {
 command -v resize > /dev/null && eval $(resize)
 
 # Get the updater itself
-run_progress_command "Mounting updater" mount_updater
+run_progress_command "Mounting updater data" mount_updater || \
+	die "Failed to mount updater data"
 
 # Load the updater config
 if [ -f /mnt/updater/updater.cfg ]; then
