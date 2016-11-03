@@ -21,6 +21,8 @@ case "$1" in
 		echo "Starting Meerkat Updater"
 		$RUN_UPDATER
 		;;
+	stop)
+		;;
 	*)
 		echo "Usage: $0 start"
 		exit 1
