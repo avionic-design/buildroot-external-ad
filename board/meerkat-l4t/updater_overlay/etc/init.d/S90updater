@@ -3,11 +3,15 @@
 # The update tool
 UPDATER=/usr/bin/meerkat-updater
 
+# The framebuffer device for HDMI. This can be set from the kernel command
+# line as unknown assignment are passed to the init environment.
+: ${FBDEV:=fb0}
+
 # Check if the HDMI is plugged in if so we run on the first virtual terminal
 # if HDMI isn't plugged we run on ttyS0. In the latter case we need getty
 # to have a real tty to allow us to get the user input.
-HDMI_STATE_REGEXP=' hdmi_state_machine_worker (tid [0-9a-f]*): state '
-if dmesg | grep "$HDMI_STATE_REGEXP" | tail -n 1 | grep -q '(Enabled)' ; then
+FBDEV_ENABLE="$(cat /sys/class/graphics/$FBDEV/device/enable 2> /dev/null)"
+if [ "$FBDEV_ENABLE" -gt 0 ] 2> /dev/null ; then
 	export TERM=linux
 	RUN_UPDATER="openvt -c 1 $UPDATER"
 else
