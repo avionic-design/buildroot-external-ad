@@ -226,6 +226,9 @@ mount_updater() {
 	echo 100 >&2
 }
 
+# Fix the console size
+command -v resize > /dev/null && eval $(resize)
+
 # Get the updater itself
 run_progress_command "Mounting updater" mount_updater
 
