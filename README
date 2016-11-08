@@ -90,8 +90,8 @@ cached tarball of that kernel.  In order to pull an updated kernel from
 github, remove both the cached tarball and the linux kernel build
 directory before triggering a rebuild:
 
-# rm dl/linux-meerkat_l4t-r21-4.tar.gz
-# rm -rf build/meerkat-rootfs/build/linux-meerkat_l4t-r21-4
+# rm dl/linux-meerkat_l4t-*.tar.gz
+# rm -rf build/meerkat-rootfs/build/linux-meerkat_l4t-*
 # make linux
 
 4. Flash the rootfs onto the eMMC
