@@ -38,6 +38,11 @@ buildroot top-level directory.
 # cd ${WORKING_DIR}/buildroot
 # make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t_defconfig
 
+For a rootfs that includes the enlightenment window manager and extra
+GUI packages, change the line above to
+
+# make BR2_EXTERNAL=../buildroot-external-ad O=build/meerkat-rootfs meerkat-l4t-bsp_defconfig
+
 In order to configure the Linux kernel for the baseboard, select the
 corresponding devicetree:
 
