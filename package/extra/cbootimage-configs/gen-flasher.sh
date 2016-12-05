@@ -81,7 +81,10 @@ fi
 
 if [ ! -z "${DFU_MAP}" ]; then
 	echo "Use DFU_MAP \"${DFU_MAP}\""
+	# For the dfu cmd, set dfu_alt_info in case EXTRA_BOOTCMD has
+	# cleared it from the environment.
 	DFU_BOOTCMD=$(cat <<-EOF
+		setenv dfu_alt_info '${DFU_MAP}'
 		echo >>> Enter DFU mode
 		dfu 0 mmc 0
 		EOF
