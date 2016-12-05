@@ -19,7 +19,7 @@ usage() {
 	echo "Options:"
 	echo "	-g <gpt-file>	Add u-boot cmds to write gpt partition table as specified in gpt-file"
 	echo "	-d <dfu-map>	Add u-boot cmds to enter dfu-mode after flashing (dfu-map specifies dfu name to partition table mapping)"
-	echo "	-e <extra-env>	Extra bootcmd options, executed after gpt and before dfu"
+	echo "	-e <extra-env>	Extra bootcmd options, executed before gpt; changes to the environment will be permanent"
 	echo "	-v		Enable verbose output"
 }
 
@@ -120,9 +120,9 @@ UBOOT_FLASH_ENV=$(cat <<-EOF
 	echo >>> Configure environment
 	env default -f -a
 	${PRE_SAVEENV_BOOTCMD}
+	${EXTRA_BOOTCMD}
 	saveenv
 	${GPT_BOOTCMD}
-	${EXTRA_BOOTCMD}
 	${DFU_BOOTCMD}
 	echo >>> Resetting system
 	reset
