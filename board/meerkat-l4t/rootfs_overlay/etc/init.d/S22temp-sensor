@@ -67,7 +67,7 @@ configure_temp_sensor() {
 }
 
 case "$1" in
-        start|restart)
+	start|restart)
 		echo -n "Setting temperature sensor limits "
 		configure_temp_sensor && echo "done." || echo "FAILED."
 		;;
