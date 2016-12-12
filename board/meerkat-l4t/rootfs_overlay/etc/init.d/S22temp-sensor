@@ -2,15 +2,13 @@
 
 temp_sensor_name=tmp451
 
-temp_sensor_fields="temp1_min temp1_max temp1_crit temp1_crit_hyst"
-temp_sensor_fields="$temp_sensor_fields temp2_min temp2_max temp2_crit"
-
 get_sysfs_device() {
 	local base="$1"
 	local prop="$2"
 	local val="$3"
 
 	for dev in $base/* ; do
+		[ -d "$dev" -a -f "$dev/$prop" ] || continue
 		if [ "$(cat $dev/$prop)" = "$val" ]; then
 			echo "$dev"
 			return 0
@@ -26,6 +24,7 @@ get_sysfs_property() {
 	local val="$3"
 
 	for prop in $base/$mask ; do
+		[ -f "$prop" ] || continue
 		if [ "$(cat $prop)" = "$val" ]; then
 			echo "$prop"
 			return 0
@@ -36,19 +35,26 @@ get_sysfs_property() {
 }
 
 get_trip_point_temp() {
-	local zone="$(get_sysfs_device /sys/class/thermal type $1)" || return
-	local trip="$(get_sysfs_property $zone "trip_point_*_type" $2)" || return
+	local zone trip
+	zone="$(get_sysfs_device /sys/class/thermal type $1)" || return
+	trip="$(get_sysfs_property $zone "trip_point_*_type" $2)" || return
 	cat ${trip%_type}_temp
 }
 
 temp1_min=0
 temp1_max=$(get_trip_point_temp com-thermal critical)
-temp1_crit=$((temp1_max + 2000))
-temp1_crit_hyst=$((temp1_max - 10000))
+if [ -n "$temp1_max" ]; then
+	temp1_crit=$((temp1_max + 2000))
+	temp1_crit_hyst=$((temp1_max - 10000))
+	temp_sensor_fields="temp1_min temp1_max temp1_crit temp1_crit_hyst"
+fi
 
 temp2_min=0
 temp2_max=$(get_trip_point_temp cpu-thermal critical)
-temp2_crit=$((temp2_max + 2000))
+if [ -n "$temp2_max" ]; then
+	temp2_crit=$((temp2_max + 2000))
+	temp_sensor_fields="$temp_sensor_fields temp2_min temp2_max temp2_crit"
+fi
 
 [ -f /etc/default/temp-sensor ] && . /etc/default/temp-sensor
 
