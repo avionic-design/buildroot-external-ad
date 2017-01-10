@@ -9,7 +9,7 @@ CUDA_SAMPLES_LICENSE_FILES = usr/local/cuda-$(CUDA_SAMPLES_VERSION)/doc/EULA.txt
 CUDA_SAMPLES_REDISTRIBUTE = NO
 
 CUDA_SAMPLES_DEPENDENCIES += host-cuda-cross-toolchain \
-	cuda libgl libglu libglew \
+	cuda libgl libglu libglew libfreeglut \
 	xlib_libX11 xlib_libXi xlib_libXmu
 
 cuda-samples-dash-version = $(subst .,-,$(CUDA_SAMPLES_VERSION))
