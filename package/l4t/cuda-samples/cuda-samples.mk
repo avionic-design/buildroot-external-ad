@@ -47,6 +47,7 @@ CUDA_SAMPLES_SMS = 32
 
 # Not all samples work with SMS 32. List the unsupported ones here:
 CUDA_SAMPLES_FILTER_OUT_PROJECTS = \
+	0_Simple/simpleMPI/Makefile \
 	0_Simple/cdpSimplePrint/Makefile \
 	0_Simple/cdpSimpleQuicksort/Makefile \
 	6_Advanced/cdpAdvancedQuicksort/Makefile \
