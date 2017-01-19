@@ -101,9 +101,9 @@ you can leverage USB mass storage support (aka UMS) in u-boot, which
 lets you write to the eMMC as a standard block device on the host.
 Current u-boot builds from Avionic Design automatically drop into UMS
 mode if no bootable OS is found.  Otherwise, UMS in u-boot can still be
-started manually.  To do this, first interrupt the boot sequence in
-u-boot by hitting any key, which drops into the u-boot shell. There,
-enter:
+started manually.  To do this, connect to the serial console and power
+up or reset the board.  Interrupt the boot sequence in u-boot by hitting
+any key, which drops into the u-boot shell. Then, enter:
 
 # run bootcmd_ums0
 
