@@ -9,8 +9,56 @@ The officially supported buildroot version is currently 2015.11, but
 version 2015.08 is also known to work and anything newer than that
 should be ok.
 
-Quickstart
-==========
+Configuring Meerkat baseboard support
+=====================================
+
+Root filesystem (rootfs) images built by this package support multiple
+Avionic Design Meerkat baseboards by including the corresponding
+device-tree files in the /boot directory.  Instructions on how to change
+the list of included device-trees are below.
+
+While the rootfs provides the device-tree files, the choice which
+device-tree is being used for booting Linux is left to the bootloader,
+u-boot.  This allows using a single, unmodified rootfs on different
+target baseboards.  It also means that in order to boot Linux with full
+support for a specific target baseboard, the u-boot on that device need
+be configured for that board.
+
+Configuring device-tree selection in u-boot for a specific baseboard can
+be achieved by either modifying the u-boot environment, or editing the
+file /boot/extlinux/extlinux.conf in the rootfs.
+
+To modify the u-boot environment to choose the correct device-tree for a
+baseboard "foo", connect to the target with serial console, interrupt
+the boot sequence by pressing any key, and then change the "board"
+environment variable:
+
+  setenv board foo
+  saveenv
+
+This will persist rootfs changes, and keep the rootfs generic.
+
+If you are choosing to build u-boot from within buildroot using this
+buildroot external, this setting can be pre-configured for the u-boot
+image by adjusting the buildroot menuconfig item "User provided options
+/ cbootimage-configs / u-boot flasher bootcmd extras"
+(BR2_PACKAGE_CBOOTIMAGE_CONFIGS_FLASHER_EXTRA_BOOTCMD) to execute the
+setenv command above.
+
+Alternatively, you can edit /boot/extlinux/extlinux.conf on the rootfs
+and replace the line with the "fdtdir" keyword with
+
+  fdt /boot/tegra124-foo.dtb
+
+This method ties the rootfs to a specific carrier board model. It also
+overrides the first method.
+
+Both, changing the u-boot environment or changing extlinux.conf on the
+rootfs, will make u-boot boot Linux with the device-tree file
+tegra124-foo.dtb.
+
+Quickstart the build
+====================
 
 Prerequistes: You must install the buildroot requirements as described in the
 buildroot manual:
