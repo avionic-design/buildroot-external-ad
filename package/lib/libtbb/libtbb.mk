@@ -22,7 +22,6 @@ define LIBTBB_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -e \
 		-C $(@D)/src \
 		arch=$(libtbb-intelarch) compiler=gcc \
-		CPLUS=$(TARGET_CXX) CONLY=$(TARGET_CC) \
 		tbbmalloc_release tbb_release
 endef
 
