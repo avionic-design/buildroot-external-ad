@@ -23,7 +23,7 @@ define LIBTBB_BUILD_CMDS
 		-C $(@D)/src \
 		arch=$(libtbb-intelarch) compiler=gcc \
 		CPLUS=$(TARGET_CXX) CONLY=$(TARGET_CC) \
-		tbbmalloc_release tbb_release
+		AS=$(TARGET_AS) tbbmalloc_release tbb_release
 endef
 
 define libtnbb-install-to
