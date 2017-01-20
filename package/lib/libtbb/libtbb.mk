@@ -19,7 +19,7 @@ ifeq ($(libtbb-intelarch),)
 endif
 
 define LIBTBB_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -e \
+	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) \
 		-C $(@D)/src \
 		arch=$(libtbb-intelarch) compiler=gcc \
 		runtime=cc$(GCC_VERSION)_libc$(GLIBC_VERSION)_kernel$(LINUX_VERSION_PROBED) \
