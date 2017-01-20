@@ -33,9 +33,9 @@ endef
 LIBTBB_INSTALL_TARGET_CMDS = $(call libtnbb-install-to,$(TARGET_DIR))
 define LIBTBB_INSTALL_STAGING_CMDS
 	$(call libtnbb-install-to,$(STAGING_DIR))
-	ln -s libtbb.so.2 $(STAGING_DIR)/usr/lib/libtbb.so
-	ln -s libtbbmalloc.so.2 $(STAGING_DIR)/usr/lib/libtbbmalloc.so
-	ln -s libtbbmalloc_proxy.so.2 $(STAGING_DIR)/usr/lib/libtbbmalloc_proxy.so
+	ln -sf libtbb.so.2 $(STAGING_DIR)/usr/lib/libtbb.so
+	ln -sf libtbbmalloc.so.2 $(STAGING_DIR)/usr/lib/libtbbmalloc.so
+	ln -sf libtbbmalloc_proxy.so.2 $(STAGING_DIR)/usr/lib/libtbbmalloc_proxy.so
 endef
 
 $(eval $(generic-package))
