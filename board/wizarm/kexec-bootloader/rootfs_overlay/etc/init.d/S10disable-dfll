@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# DFLL doesn't cope properly with beeing started from kexec.
+# We disable it before doing the kexec to workaround this problem.
+#
+
+use_dfll=/sys/module/tegra12_clocks/parameters/use_dfll
+
+case "$1" in
+	start)
+		;;
+	stop)
+		if [ -f "$use_dfll" ]; then
+			echo "Disabling DFLL."
+			echo 0 > "$use_dfll"
+		fi
+		;;
+	*)
+		echo "Usage: $0 stop" >&2
+		exit 1
+		;;
+esac
