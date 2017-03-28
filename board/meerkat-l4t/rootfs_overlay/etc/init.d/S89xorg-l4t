@@ -30,7 +30,7 @@ case "$1" in
 		[ ! -e "$xorg_conf" -o -L "$xorg_conf" ] || exit 0
 
 		echo -n "Selecting xorg.conf "
-		set_xorg_conf && echo "done." || { echo "FAILED." ; exit 1 }
+		set_xorg_conf && echo "done." || { echo "FAILED." ; exit 1 ; }
 		;;
 	*)
 		echo "usage: $0 {start|restart}"
