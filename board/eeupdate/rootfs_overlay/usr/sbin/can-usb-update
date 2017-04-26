@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Helper script to update the CAN USB controller
+# on the Cyberdyne Cleaning Robot board.
+#
+
+CAN_IMG="$1"
+CAN_EEPROM_IMG="$2"
+CAN_MCU=at90usb646
+CAN_USB_VENDOR=03eb
+CAN_USB_PRODUCT=2ff9
+CAN_GPIOCHIP=as3722-gpio
+CAN_RST_GPIO=5
+CAN_HWB_GPIO=6
+
+if ! [ -r "$CAN_IMG" ]; then
+	echo "Usage: $(basename $0) IMG [EEPROM_IMG]"
+	exit 1
+fi
+
+# Find the base address of the GPIO controller
+gpio_base=
+for l in /sys/class/gpio/gpiochip*/label; do
+	if [ "$(cat $l)" = "$CAN_GPIOCHIP" ]; then
+		gpio_base="$(cat ${l%/label}/base)"
+		break
+	fi
+done
+
+if [ -z "$gpio_base" ]; then
+	echo "Failed to find GPIO base"
+	exit 1
+fi
+
+rst=$((gpio_base + CAN_RST_GPIO))
+hwb=$((gpio_base + CAN_HWB_GPIO))
+
+rst_gpio=/sys/class/gpio/gpio${rst}
+hwb_gpio=/sys/class/gpio/gpio${hwb}
+
+# Put the MCU into reset
+[ -d "$rst_gpio" ] || echo $rst > /sys/class/gpio/export
+[ -d "$hwb_gpio" ] || echo $hwb > /sys/class/gpio/export
+echo out > $rst_gpio/direction
+echo 0 > $rst_gpio/value
+echo out > $hwb_gpio/direction
+echo 0 > $hwb_gpio/value
+
+# Release reset before HWB to go into the bootloader
+echo 1 > $rst_gpio/value
+sleep 0.5
+echo 1 > $hwb_gpio/value
+
+# Find the USB device
+dev=
+for v in /sys/bus/usb/devices/*/idVendor ; do
+	[ "$(cat $v)" = "$CAN_USB_VENDOR" ] || continue
+	dev=${v%/idVendor}
+	[ "$(cat $dev/idProduct)" = "$CAN_USB_PRODUCT" ] && break
+	dev=
+done
+
+if [ -z "$dev" ]; then
+	echo "Failed to find DFU USB device"
+	exit 1
+fi
+
+# Disable USB auto suspend otherwise the DFU interface disconnect
+echo on > $dev/power/control
+
+# Erase, flash and start
+dfu-programmer $CAN_MCU erase --force &&
+	dfu-programmer $CAN_MCU flash "$CAN_IMG" &&
+	([ -z "$CAN_EEPROM_IMG" ] ||
+		 dfu-programmer $CAN_MCU flash --eeprom --force "$CAN_EEPROM_IMG") &&
+	dfu-programmer $CAN_MCU start
