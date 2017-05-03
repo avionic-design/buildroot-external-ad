@@ -20,7 +20,7 @@ set_xorg_conf() {
 	rm -f "$xorg_conf"
 	# Add the new one if the target exists
 	if [ -f "$target" ] ; then
-		ln -rs "$target" "$xorg_conf"
+		ln -s "$target" "$xorg_conf"
 	fi
 }
 
