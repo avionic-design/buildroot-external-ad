@@ -1,0 +1,118 @@
+#!/bin/sh -e
+
+usage() {
+	echo "Usage: $(basename $0) GPIO [in|H|L|0|1|value|direction|unexport]"
+	exit 1
+}
+
+tegra_gpio() {
+	REGEXP='^([A-Z]|AA|BB|CC|DD|EE|FF)?([0-9]+)$'
+
+	if ! echo "$1" | grep -Eq "$REGEXP" ; then
+		echo "Invalid GPIO: $1" >&2
+		return 1
+	fi
+
+	BANK="$(echo "$1" | sed -E "s/$REGEXP/\1/")"
+	ID="$(echo "$1" | sed -E "s/$REGEXP/\2/")"
+
+	BANK_A=0
+	BANK_B=1
+	BANK_C=2
+	BANK_D=3
+	BANK_E=4
+	BANK_F=5
+	BANK_G=6
+	BANK_H=7
+	BANK_I=8
+	BANK_J=9
+	BANK_K=10
+	BANK_L=11
+	BANK_M=12
+	BANK_N=13
+	BANK_O=14
+	BANK_P=15
+	BANK_Q=16
+	BANK_R=17
+	BANK_S=18
+	BANK_T=19
+	BANK_U=20
+	BANK_V=21
+	BANK_W=22
+	BANK_X=23
+	BANK_Y=24
+	BANK_Z=25
+	BANK_AA=26
+	BANK_BB=27
+	BANK_CC=28
+	BANK_DD=29
+	BANK_EE=30
+	BANK_FF=31
+
+	if [ -n "$BANK" ]; then
+		eval "BANK=\$BANK_$BANK"
+		echo $((BANK * 8 + ID))
+	else
+		echo $ID
+	fi
+
+	return 0
+}
+
+[ -n "$1" -a -n "$2" ] || usage
+
+# Assume a tegra SoC if the first gpio chip is tegra-gpio
+if [ "$(cat /sys/class/gpio/gpiochip0/label)" = "tegra-gpio" ]; then
+	ID="$(tegra_gpio "$1")" || exit
+else
+	ID="$1"
+fi
+
+GPIO=gpio$ID
+ACTION="$2"
+
+cd /sys/class/gpio
+
+if [ "$ACTION" = unexport ]; then
+	echo "$ID" > unexport
+	exit
+fi
+
+if [ "$ACTION" = direction ]; then
+	if [ -d "$GPIO" ]; then
+		cat "$GPIO/direction"
+	else
+		echo "not exported"
+		false
+	fi
+	exit
+fi
+
+test -d "$GPIO" || echo "$ID" > export && cd "$GPIO"
+
+if [ "$ACTION" = value ]; then
+	cat value
+	exit
+fi
+
+direction="$(cat direction)"
+if [ "$ACTION" = in ]; then
+	[ "$direction" = in ] || echo in > direction
+else
+	[ "$direction" = out ] || echo out > direction
+fi
+
+case "$ACTION" in
+	1|h|H)
+		echo 1 > value
+		;;
+	0|l|L)
+		echo 0 > value
+		;;
+	in)
+		cat value
+		;;
+	*)
+		usage
+		;;
+esac
