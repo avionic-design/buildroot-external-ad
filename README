@@ -72,10 +72,8 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 1. Grab buildroot and our overlay
 
 # cd ${WORKING_DIR}
-# git clone https://github.com/avionic-design/buildroot-external-ad.git
-# git clone git://git.buildroot.net/buildroot
-# cd ${WORKING_DIR}/buildroot
-# git checkout -b 2015.11 2015.11
+# git clone -b 2015.11 https://github.com/avionic-design/buildroot-external-ad.git
+# git clone -b 2015.11 git://git.buildroot.net/buildroot
 
 2. Prepare build
 
