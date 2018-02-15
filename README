@@ -73,7 +73,7 @@ http://buildroot.uclibc.org/downloads/manual/manual.html#requirement
 
 # cd ${WORKING_DIR}
 # git clone -b 2015.11 https://github.com/avionic-design/buildroot-external-ad.git
-# git clone -b 2015.11 git://git.buildroot.net/buildroot
+# git clone -b 2015.11.1 git://git.buildroot.net/buildroot
 
 2. Prepare build
 
